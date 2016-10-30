@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0, height=device-height, width=device-width" />
+
+  <!-- Standardised web app manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="shortcut icon" href="favicon.ico">
+
+
+  <title>Birdu</title>
+  <meta name="description" content="Eat small birds, avoid large ones. Try to stay alive!">
+
+  <style>
+    html {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      background: #000;
+      overflow: hidden;
+      -ms-touch-action: none;
+      touch-action: none;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    *,
+    *:before,
+    *:after {
+      box-sizing: inherit;
+    }
+  </style>
+
+  <!-- Preload TTF fonts -->
+  <style>
+    @font-face {
+      font-family: "papercuts";
+      src: url('./assets/fonts/papercuts-2.ttf') format("truetype");
+    }
+
+    .hide {
+      /*
+      position: absolute;
+      left: -5000px;
+      color: white;
+      */
+      background-color: black;
+      height: 0;
+    }
+
+    .load-papercuts {
+      font-family: "papercuts";
+    }
+  </style>
+</head>
+
+<body>
+  <!--  This class is here to force .ttf fonts to load for the game (Phaser does not support generic .ttf loading)  -->
+  <p class="load-papercuts hide">Some text needed to pre-load font family</p>
+
+  <!-- Cordova auto-includes itself for apps -->
+  <script src="cordova.js"></script>
+
+  <!--
+  Below files are added to added to project in the gulpfile's dist task
+  -->
+  <!-- build:js phaser.min.js -->
+  <script src="phaser.js"></script>
+  <!-- /build -->
+  <!-- build:js game.min.js -->
+  <script src="game.js"></script>
+  <!-- /build -->
+
+  <!-- Start the game from the app.js's init function -->
+  <script>
+    const runningCordova = !!window.cordova;
+    if (runningCordova) {
+      document.addEventListener("deviceready", window.app.init);
+    } else {
+      window.app.init();
+    }
+  </script>
+</body>
+
+</html>

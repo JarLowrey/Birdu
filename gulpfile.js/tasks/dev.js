@@ -5,52 +5,49 @@
 
 'use strict';
 
-var buffer = require('vinyl-buffer');
-var source = require('vinyl-source-stream');
-var server = require('browser-sync').create();
-var watch = require('../lib/bundler').watch;
+const merge = require('merge-stream');
+const server = require('browser-sync').create();
+const watch = require('../lib/bundler').watch;
+const getNamedBuffer = require('../lib/get-named-buffer');
 
 module.exports = function (gulp, $, config) {
-  var dirs = config.dirs;
-  var files = config.files;
+  const dirs = config.dirs;
+  const files = config.files;
 
-  var notifyError = $.notify.onError('<%= error.message %>');
-
-  // Holds the Watchify instance for live development.
-  var watcher;
-
-  // Bundle the application source code using Browserify.
-  gulp.task('dev:scripts', ['dev:lint'], function () {
-    if (!watcher) {
-      watcher = watch(config.bundle);
+  // Compile the application code for development, actively observing for
+  // changes and triggering rebuilds on demand.
+  gulp.task('bundleDev', (() => {
+    const devBuffer = getNamedBuffer('game.js');
+    const notifyError = $.notify.onError('<%= error.message %>');
+    const watcher = watch(config.bundle)
+      .on('log', $.util.log)
+      .on('update', task);
+    return task;
+    function task() {
+      return merge(lint(), rebuild());
     }
-    return watcher
-      .bundle()
-      .on('error', notifyError)
-      .pipe(source('game.js'))
-      .pipe(buffer())
-      .pipe(gulp.dest(dirs.build))
-      .pipe(server.stream());
-  });
+    function rebuild() {
+      return watcher
+        .bundle()
+        .on('error', notifyError)
+        .pipe(devBuffer())
+        .pipe(gulp.dest(dirs.build))
+        .pipe(server.stream());
+    }
+  })());
 
-  // Starts the live web development server for testing.
-  gulp.task('dev:serve', ['dev:scripts'], function () {
-    server.init(config.server);
-  });
+  // Starts the Web Server for testing.
+  gulp.task('serve', ['bundleDev'], () => server.init(config.server));
 
-  // Monitors files for changes, trigger rebuilds as needed.
-  gulp.task('dev:watch', function () {
-    gulp.watch(files.scripts, ['dev:scripts']);
-  });
-
-  // Check script files and issue warnings about non-conformances.
-  gulp.task('dev:lint', function () {
+  // Check syntax and style of scripts and warn about potential issues.
+  function lint() {
     return gulp.src([files.scripts])
-      .pipe($.cached('dev:lint'))
+      .pipe($.cached('eslint'))
       .pipe($.eslint())
       .pipe($.eslint.format('stylish', process.stderr));
-  });
+  }
+  gulp.task('lint', lint);
 
   // The main development task.
-  gulp.task('default', ['dev:serve', 'dev:watch']);
+  gulp.task('default', ['serve']);
 };

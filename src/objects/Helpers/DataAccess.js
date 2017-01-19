@@ -6,12 +6,12 @@
 
 export default class DataAccess {
 
-  static _getStoredItemName = function(itemName) { //helper to prefix app info to local storage key/pairs so game can be hosted on different websites
+  static _getStoredItemName(itemName) { //helper to prefix app info to local storage key/pairs so game can be hosted on different websites
     const appName = 'Birdu'; //could use this.game.app/dev Name, but then would require a reference to game
     const devName = 'JTronLabs';
 
     return appName + '_' + devName + '_' + itemName;
-  };
+  }
 
   static getConfig(name) {
     try {

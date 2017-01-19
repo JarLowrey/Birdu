@@ -113,6 +113,8 @@ export default class Player extends Bird {
   fancyKill() {
     super.fancyKill();
 
+    this.game.state.states.Game.levelupCoin.visible = false;
+
     DataAccess.setConfig('sprites', []);
     DataAccess.setConfig('player', null);
 

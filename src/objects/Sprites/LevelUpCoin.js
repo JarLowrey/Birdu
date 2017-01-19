@@ -41,7 +41,6 @@ export default class LevelUpCoin extends ExtendedSprite {
     if (this.visible) {
       this.game.physics.arcade.moveToObject(this, this.game.player, this.speed);
       this.game.physics.arcade.overlap(this.game.player, this, this.coinReachedPlayer, null, this);
-      if (!this.game.player.alive) this.visible = false;
     }
   }
 

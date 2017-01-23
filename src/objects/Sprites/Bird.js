@@ -4,7 +4,6 @@
  */
 import ExtendedSprite from '../Sprites/ExtendedSprite';
 import DataAccess from '../Helpers/DataAccess';
-import FactoryUi from '../Helpers/FactoryUi';
 
 export default class Bird extends ExtendedSprite {
   static className() {
@@ -18,16 +17,6 @@ export default class Bird extends ExtendedSprite {
     super(game, 0, 0, game.spritesheetKey);
 
     this.game.physics.arcade.enableBody(this);
-
-    //add an emitter to show little meat crumbs when this player eats something
-    this.emitter = this.game.add.emitter(0, 0, this.game.integers.drumsticks.max * 2);
-    this.emitter.makeParticles(this.game.spritesheetKey, 'meat');
-    this.emitter.setRotation(-720, 720);
-    this.emitter.setXSpeed(-this.game.speeds.drumsticks, this.game.speeds.drumsticks);
-    this.emitter.setYSpeed(-this.game.speeds.drumsticks, 0);
-    this.emitter.minParticleScale = FactoryUi.desiredImageScaleX(this.game, this.game.dimen.width.meat, 'meat');
-    this.emitter.maxParticleScale = this.emitter.minParticleScale;
-
   }
   wiggle() {
     const wiggle = this.game.add.tween(this).to({
@@ -74,7 +63,7 @@ export default class Bird extends ExtendedSprite {
       largeBird.setSizeFromWidth(widthInc + largeBird.width);
       largeBird.wiggle();
 
-      smallBird.showCrumbs();
+      game.meat.showCrumbs(smallBird.x,smallBird.y,smallBird.width,smallBird.height);
       smallBird.fancyKill();
     }
 
@@ -82,16 +71,6 @@ export default class Bird extends ExtendedSprite {
       const angle = (largeBird.originalAngle === undefined) ? largeBird.angle : largeBird.originalAngle; //make adjustment for ScaredBird
       game.physics.arcade.velocityFromAngle(angle, largeBird.getSpeed(), largeBird.body.velocity);
     }
-  }
-
-  showCrumbs() {
-    this.emitter.width = Math.abs(this.width);
-    this.emitter.height = Math.abs(this.height);
-    this.emitter.y = this.y;
-    this.emitter.x = this.x;
-
-    this.emitter.start(true, this.game.durations.drumsticks.lifespan, null,
-      Phaser.Math.between(this.game.integers.drumsticks.min, this.game.integers.drumsticks.max));
   }
 
   //don't override the default kill() method, as that will cause particles and effects to be rendered when enemies are killed offscreen

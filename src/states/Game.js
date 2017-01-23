@@ -18,6 +18,7 @@ import Player from '../objects/Sprites/Player';
 import DataAccess from '../objects/Helpers/DataAccess';
 import Pools from '../objects/Pools';
 import FactoryUi from '../objects/Helpers/FactoryUi';
+import Meat from '../objects/Helpers/Meat';
 
 export default class Game extends Phaser.State {
 
@@ -29,6 +30,8 @@ export default class Game extends Phaser.State {
     //player/player! Create last so he appears over top of other elements
     this.game.player = new Player(this.game);
     this.add.existing(this.game.player);
+
+    this.game.meat = new Meat(this.game);
 
     this.levelupCoin = new LevelUpCoin(this.game);
     this.add.existing(this.levelupCoin);

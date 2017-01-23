@@ -89,11 +89,6 @@ export default class Game extends Phaser.State {
     this.enemySpawnTimer.start();
     this.enemySpawnTimer.loop(this.game.durations.spawnFreq, this.spawnEnemy, this);
 
-    //perform collisions in slow running timer instead of in update loop for better perf- NOTE - this is probably an awful idea
-    this.slowUpdateTimer = this.game.time.create(false);
-    this.slowUpdateTimer.start();
-    this.slowUpdateTimer.loop(100, this.slowUpdate, this);
-
     this.starSpawnTimer = this.game.time.create(false);
     this.starSpawnTimer.start();
     this.starSpawnTimer.add(this.getStarSpawnTime(), this.spawnCloud, this);
@@ -203,7 +198,7 @@ export default class Game extends Phaser.State {
     }
   }
 
-  slowUpdate() {
+  update() {
     this.game.spritePools.collideAll();
 
     this.updateScoreFromBuffer();

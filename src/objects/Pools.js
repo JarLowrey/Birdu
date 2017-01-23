@@ -19,23 +19,23 @@ export default class Pools {
 
     //initialize pools
     this.pools = {};
-    this.pools[Enemy.className()] = Enemy;
-    this.pools[ScaredEnemy.className()] = ScaredEnemy;
-    this.pools[Poop.className()] = Poop;
-    this.pools[PoopSplatter.className()] = PoopSplatter;
-    this.pools[Star.className()] = Star;
-    this.pools[Cloud.className()] = Cloud;
-    this.pools[MovingScore.className()] = MovingScore;
+    this.pools[Enemy.className()] =         {'class':Enemy,       'count':25};
+    this.pools[ScaredEnemy.className()] =   {'class':ScaredEnemy, 'count':20};
+    this.pools[Poop.className()] =          {'class':Poop,        'count':35};
+    this.pools[PoopSplatter.className()] =  {'class':PoopSplatter,'count':7};
+    this.pools[Star.className()] =          {'class':Star,        'count':4};
+    this.pools[Cloud.className()] =         {'class':Cloud,       'count':15};
+    this.pools[MovingScore.className()] =   {'class':MovingScore, 'count':12};
 
     //create the groups and reassign this.pools
     for (var className in this.pools) {
-      const pool = this.game.add.group();
-      pool.classType = this.pools[className];
+      const newPool = this.game.add.group();
+      const poolInfo = this.pools[className];
 
-      const prePopNum = (this.isEnemy(pool.classType)) ? 25 : 15;
-      pool.createMultiple(prePopNum);
+      newPool.classType = poolInfo['class'];
+      newPool.createMultiple(poolInfo['count']);
 
-      this.pools[className] = pool;
+      this.pools[className] = newPool;
     }
 
     this.game.world.bringToTop(this.getPool(PoopSplatter.className())); //ensure poop splatters stay in front of all other sprites

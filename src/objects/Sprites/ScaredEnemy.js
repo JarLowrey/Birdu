@@ -44,20 +44,21 @@ export default class ScaredEnemy extends Enemy {
     if (this.gloating || !this.alive) return;
 
     const distToPlayer = Phaser.Point.distance(this, this.game.player);
-    const scared = this.area() < this.game.player.area();
-    const buffer = this.game.player.width;
-    const close = distToPlayer < buffer;
+    const close = distToPlayer < this.game.player.width;
 
-    if (scared && close) { //player is getting closer
-      const escapeRadians = this.game.physics.arcade.angleBetweenCenters(this.game.player, this);
-      const escapeDegrees = Phaser.Math.radToDeg(escapeRadians);
+    if (close) {
+      const scared = this.area() < this.game.player.area();//only check scared when close to save CPU
+      if(scared){
+        const escapeRadians = this.game.physics.arcade.angleBetweenCenters(this.game.player, this);
+        const escapeDegrees = Phaser.Math.radToDeg(escapeRadians);
 
-      this.setLookingDirection(escapeDegrees);
-      this.travelingAngle = escapeDegrees;
-      this.game.physics.arcade.velocityFromAngle(escapeDegrees, this.getSpeed(), this.body.velocity);
+        this.setLookingDirection(escapeDegrees);
+        this.travelingAngle = escapeDegrees;
+        this.game.physics.arcade.velocityFromAngle(escapeDegrees, this.getSpeed(), this.body.velocity);
 
-      this.revertDirTimer.removeAll();
-      this.revertDirTimer.add(500, this.revertDirection, this);
+        this.revertDirTimer.removeAll();
+        this.revertDirTimer.add(500, this.revertDirection, this);
+      }
     }
   }
 

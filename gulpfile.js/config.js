@@ -9,7 +9,7 @@
 const SRC = 'src';
 
 // Where final distribution files will be copied.
-const DIST = 'dist';
+const DIST = 'cordova-app/www';
 
 // Where compiled scripts will be placed.
 const BUILD = 'build';

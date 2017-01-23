@@ -12,7 +12,7 @@
     <access origin="*" />
     <allow-intent href="sms:*" />
     <platform name="android">
-        <preference name="android-minSdkVersion" value="19" />
+        <preference name="android-minSdkVersion" value="16" />
         <preference name="android-manifest/application/activity/@android:theme" value="@android:style/Theme.Black.NoTitleBar" />
         <allow-intent href="market:*" />
     </platform>

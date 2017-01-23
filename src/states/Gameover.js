@@ -59,7 +59,7 @@ export default class Gameover extends Phaser.State {
     //display all the new sprites!
     this.prevFall = null;
     newSkins.forEach(function(birdId) {
-      const firstBirdFrame = Bird.getFlyingFrames(birdId, this.game)[0];
+      const firstBirdFrame = Bird.birdFrameName(birdId, 1);
 
       var newBird = this.add.image(this.game.world.centerX, 0, this.game.spritesheetKey, firstBirdFrame);
       this.unlockedBirds.add(newBird);

@@ -100,6 +100,6 @@ export default class Enemy extends Bird {
     } while (randomEnemyFrame == DataAccess.getConfig('playerFrame'));
     this.frameId = randomEnemyFrame;
 
-    this.setupAnimations();
+    this.animations.play(Bird.birdFrameName(this.frameId));
   }
 }

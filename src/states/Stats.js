@@ -154,7 +154,7 @@ export default class Stats extends Phaser.State {
       }
 
       //create new bird image
-      const firstFlyingFrame = Bird.getFlyingFrames(i, this.game)[0];
+      const firstFlyingFrame = Bird.birdFrameName(i, 1);
       var bird = this.add.button(0, 0, this.game.spritesheetKey, this.clickedBird(i), this, firstFlyingFrame, firstFlyingFrame, firstFlyingFrame, firstFlyingFrame); //assign first birds position
       bird.tint = 0x000000;
       bird.alpha = 0.5;

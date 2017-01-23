@@ -17,6 +17,7 @@ export default class Bird extends ExtendedSprite {
     super(game, 0, 0, game.spritesheetKey);
 
     this.game.physics.arcade.enableBody(this);
+    this.createAllPotentialAnimations();
   }
   wiggle() {
     const wiggle = this.game.add.tween(this).to({
@@ -89,17 +90,24 @@ export default class Bird extends ExtendedSprite {
 
     var frameNames = [];
     for (var i = 1; i <= numFrames; i++) {
-      frameNames.push('b' + spriteNum + '-' + i);
+      frameNames.push(Bird.birdFrameName(spriteNum,i));
     }
 
     return frameNames;
   }
+  static birdFrameName(spriteNum,frameNum){
+    if(frameNum != undefined){
+      return 'b'+spriteNum+'-'+frameNum;
+    }else{
+      return 'b'+spriteNum;
+    }
+  }
 
-  setupAnimations() {
-    //play that sprite's flapping animation
-    const animationFrames = Bird.getFlyingFrames(this.frameId, this.game);
-    this.animations.add('idling', animationFrames, this.game.animationInfo.flapFPS * (animationFrames.length / 4), true);
-    this.animations.play('idling');
+  createAllPotentialAnimations() {
+    for(var i=0;i<this.game.animationInfo.maxBirdFrame;i++){
+      const animationFrames = Bird.getFlyingFrames(i, this.game);
+      this.animations.add(Bird.birdFrameName(i), animationFrames, this.game.animationInfo.flapFPS * (animationFrames.length / 4), true);
+    }
   }
 
   serialize() {
@@ -117,7 +125,7 @@ export default class Bird extends ExtendedSprite {
 
     const frameId = info.frame.split('-')[0].slice(1); //remove the 'b' prefix and everything after the '-'
     this.frameId = Number(frameId);
-    this.setupAnimations();
+    this.animations.play(Bird.birdFrameName(this.frameId));
   }
 
 }

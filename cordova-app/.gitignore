@@ -3,4 +3,4 @@ www/
 plugins/
 
 #do not upload your passwords in plain text!
-build.json
+#build.json

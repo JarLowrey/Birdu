@@ -22,12 +22,18 @@ import Meat from '../objects/Helpers/Meat';
 
 export default class Game extends Phaser.State {
 
+  get scoreBuffer(){ return this._scoreBuffer; }
+  set scoreBuffer(newbuffer){
+    this._scoreBuffer = newbuffer;
+    this.updateScoreFromBuffer();
+    this.scoreLabelTween.start();
+  }
+
   create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
     this.background = FactoryUi.displayBg(this.game);
 
-    //player/player! Create last so he appears over top of other elements
     this.game.player = new Player(this.game);
     this.add.existing(this.game.player);
 
@@ -87,6 +93,9 @@ export default class Game extends Phaser.State {
 
     this.pieProgress.setText(this.level);
     this.scoreLabel.setText(this.score.toLocaleString());
+
+    this.textUpdateTimer = this.game.time.create(false);
+    this.textUpdateTimer.start();
 
     this.enemySpawnTimer = this.game.time.create(false);
     this.enemySpawnTimer.start();
@@ -203,8 +212,6 @@ export default class Game extends Phaser.State {
 
   update() {
     this.game.spritePools.collideAll();
-
-    this.updateScoreFromBuffer();
   }
 
   birdCollide(player, enemy) {
@@ -220,7 +227,7 @@ export default class Game extends Phaser.State {
     var scoreIncrease = Math.round(Math.sqrt(enemyArea));
 
     //create the label that flies up to the main score label
-    this.game.spritePools.spawn(MovingScore.className()).startMovement(scoreIncrease, this.scoreLabel, this.scoreLabelTween);
+    this.game.spritePools.spawn(MovingScore.className()).startMovement(scoreIncrease, this.scoreLabel);
 
     this.addToCombos(scoreIncrease);
 
@@ -252,9 +259,9 @@ export default class Game extends Phaser.State {
   }
 
   saveLevel() {
-    DataAccess.setConfig('score', this.score + this.scoreBuffer);
+    DataAccess.setConfig('score', this.score + this._scoreBuffer);
     DataAccess.setConfig('level', this.level);
-    this.scoreBuffer = 0;
+    this._scoreBuffer = 0;
   }
 
   saveSprites() {
@@ -275,24 +282,26 @@ export default class Game extends Phaser.State {
       this.level = 0;
     }
 
-    this.scoreBuffer = 0;
+    this._scoreBuffer = 0;
 
     const allSprites = DataAccess.getConfig('sprites');
     this.game.spritePools.deserialize(allSprites);
   }
 
   updateScoreFromBuffer() {
-    if (this.scoreBuffer > 0) {
+    if (this._scoreBuffer > 0) {
       var change;
-      if(this.scoreBuffer < 20) {
-        change = this.scoreBuffer;
+      if(this._scoreBuffer < 20) {
+        change = this._scoreBuffer;
       }else{
-        change =  Math.ceil(this.scoreBuffer / 2);
+        change =  Math.ceil(this._scoreBuffer / 2);
       }
 
       this.score += change;
       this.scoreLabel.setText(this.score.toLocaleString());
-      this.scoreBuffer -= change;
+      this._scoreBuffer -= change;
+
+      this.textUpdateTimer.add(this.game.durations.textUpdate, this.updateScoreFromBuffer, this);
     }
   }
 
@@ -346,16 +355,12 @@ export default class Game extends Phaser.State {
       const comboScoreInc = Math.round(this.comboBaseScoreFromEating * (this.comboCount / 10.0));
       const numComboTxt = 'Combo x' + this.comboCount;
       //Create a new label for displaying how many combos the user got, then transform it into a score and move up to labelz
-      this.game.spritePools.spawn(MovingScore.className()).startMovement(comboScoreInc, this.scoreLabel, this.scoreLabelTween, numComboTxt, this.game.fonts.combo);
+      this.game.spritePools.spawn(MovingScore.className()).startMovement(comboScoreInc, this.scoreLabel, numComboTxt, this.game.fonts.combo);
     }
     //reset combo stats and set the timer to null (it has already completed [hence we're in this function], so we do not need to remove it from events queue)
     this.comboBaseScoreFromEating = 0;
     this.comboCount = 0;
     this.comboTimer = null;
-  }
-
-  incrementScoreBuffer(amt) {
-    this.scoreBuffer += amt;
   }
 
 }

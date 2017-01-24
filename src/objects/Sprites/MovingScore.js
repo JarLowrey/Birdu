@@ -24,7 +24,7 @@ export default class MovingScore extends Phaser.Text {
     this.y = this.game.player.y;
   }
 
-  startMovement(score, scoreLabel, scoreLabelTween,
+  startMovement(score, scoreLabel,
     initialText = score.toLocaleString(), initialFont = this.game.fonts.score_animating,
     movementDuration = 700, growDuration = 400) {
     this.score = score;
@@ -64,7 +64,6 @@ export default class MovingScore extends Phaser.Text {
       //When the animation finishes, destroy this score label, trigger the total score labels animation and add the score
       this.movementTween.onComplete.add(function() {
         this.kill();
-        scoreLabelTween.start();
         this.game.state.states.Game.scoreBuffer += this.score;
       }, this);
     }

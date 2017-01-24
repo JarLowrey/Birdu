@@ -2,6 +2,7 @@
   "coinTravelSeconds":1,
   "screenShake":250,
   "spawnFreq":200,
+  "textUpdate":125,
 
   "splatter":{
     "lifespan":3000,

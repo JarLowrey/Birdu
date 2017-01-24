@@ -6,6 +6,8 @@
    "maxScore":"Surpass a high score of _",
    "timesEaten":"Eat this animal _ times",
    "medal":"Attain _ _ Medals",
+   "comboCount":"Eat _ birds in combo",
+   "level":"Get to level _",
    "totalMedals":"Earn _ total medals"
   },
   "preyIAPName":"Batty & Bug-eyed",

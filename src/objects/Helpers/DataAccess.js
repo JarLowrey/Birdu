@@ -27,6 +27,17 @@ export default class DataAccess {
     return value;
   }
 
+  static getLockedBirds(game){
+    var allBirdIds=new Set();
+    for(let i=0;i<=game.animationInfo.maxBirdFrame;i++){
+      allBirdIds.add(i);
+    }
+
+    var unlockedBirds = new Set(DataAccess.getConfig('unlockedBirdSprites'));
+    var lockedBirds = [...allBirdIds].filter(x => !unlockedBirds.has(x)); //find all bird ids that are not in the unlocked set but ARE in the allBird set
+
+    return lockedBirds;
+  }
 
   static initializeSavedData(game) {
     DataAccess.setConfig('score', DataAccess.getConfig('score') || 0);

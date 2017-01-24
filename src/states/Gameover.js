@@ -141,6 +141,7 @@ export default class Gameover extends Phaser.State {
           else if (unlockCriteria.timesEaten && kills[i] >= unlockCriteria.timesEaten) idsToAddToUnlockSprites.push(i);
           else if (unlockCriteria.totalMedals && numMedals >= unlockCriteria.totalMedals) idsToAddToUnlockSprites.push(i);
           else if (unlockCriteria.comboCount && numCombos >= unlockCriteria.comboCount) idsToAddToUnlockSprites.push(i);
+          else if (unlockCriteria.level && numCombos >= unlockCriteria.level) idsToAddToUnlockSprites.push(i);
         }
       }
     }

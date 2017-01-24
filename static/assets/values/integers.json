@@ -63,9 +63,16 @@
 
     {"timesEaten":100},
     {"timesEaten":500},
-    {"timesEaten":1500},
+    {"timesEaten":1250},
 
-    null,null,null,null,null,null,null
+    {"comboCount":3},
+    {"comboCount":5},
+    {"comboCount":6},
+    {"comboCount":7},
+    {"comboCount":8},
+
+    {"level":10},
+    {"level":50}
   ],
 
   "area":{

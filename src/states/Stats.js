@@ -14,14 +14,25 @@ import FactoryUi from '../objects/Helpers/FactoryUi';
 export default class Stats extends Phaser.State {
 
   create() {
-    this.predatorID = 'predators';
-    this.preyID = 'bats_and_bug';
+    this.allSkinsProductId = 'unlock_all_skins';
 
     this.background = FactoryUi.displayBg(this.game);
     this.stateBtns = FactoryUi.createStateChangeButtons(this.game);
 
     const score = this.game.nFormatter(DataAccess.getConfig('maxScore'));
     const level = this.game.nFormatter(DataAccess.getConfig('maxLevel'));
+    //setup purchases and purchase buttons
+    if (this.game.device.cordova){
+      this.initStore();
+
+      this.buyBtn = this.add.button(0, 0, this.game.spritesheetKey, function() {
+        store.order(this.allSkinsProductId);
+      }, this, 'buyPressed', 'buy', 'buyPressed', 'buy');
+
+      if(this.allSkinsProduct.canPurchase || DataAccess.getLockedBirds(this.game).length == 0){
+        this.buyBtn.visible = false;
+      }
+    }
 
     this.maxScore = this.game.add.text(0, 0, 'High Score: ' + score, this.game.fonts.smallText);
     this.maxLvl = this.add.text(0, 0, 'Best Level: ' + level, this.game.fonts.smallText);
@@ -29,9 +40,6 @@ export default class Stats extends Phaser.State {
     this.showUnlockedBirds();
 
     this.medals = this.createMedals();
-
-    //setup purchases and purchase buttons
-    if (this.game.device.cordova) this.initStore();
 
     this.stateBtns.stats.visible = false;
     this.positionDisplayObjects();
@@ -43,29 +51,20 @@ export default class Stats extends Phaser.State {
     store.verbosity = store.INFO;
 
     store.register({
-      id: this.predatorID,
-      alias: 'Predator Pack',
-      type: store.NON_CONSUMABLE
-    });
-    store.register({
-      id: this.preyID,
-      alias: 'Batty and Bug Eyed Pack',
+      id: this.allSkinsProductId,
+      alias: 'All Skins',
       type: store.NON_CONSUMABLE
     });
 
-    //this.predatorsProduct = store.get(this.predatorID);
-    //this.preyProduct = store.get(this.preyID);
+    //get product information after registering with the store
+    //https://github.com/j3k0/cordova-plugin-purchase/blob/master/doc/api.md#product
+    this.allSkinsProduct = store.get(this.allSkinsProductId);
 
-    store.when(this.predatorID).approved(function(order) {
-      order.finish();
-      this.applyIAP('Predators Unlocked!\n\n' + this.game.strings.devThankYou, this.game.animationInfo.predatorIds);
-    }.bind(this));
-
-    store.when(this.preyID).approved(function(order) {
-      order.finish();
-      this.applyIAP('Bats and Bug Unlocked!\n\n' + this.game.strings.devThankYou, this.game.animationInfo.preyIds);
-    }.bind(this));
-
+    store.when(this.allSkinsProductId).approved(
+      function(product) {
+        this.applyUnlockAllSkinsIAP();
+        product.finish();
+      }.bind(this));
 
     // Log all errors
     store.error(function(error) {
@@ -76,17 +75,19 @@ export default class Stats extends Phaser.State {
     store.refresh();
   }
 
-  applyIAP(unlockAlertText, arrayOfBirdIds) {
-    //due to internet issues, async stuff, testing issues, etc (so...IDK why...) order may be approved multiple times
-    //only show alert & apply unlock the first time
-    var unlockedBirds = DataAccess.getConfig('unlockedBirdSprites');
-    if (unlockedBirds.includes(arrayOfBirdIds[0])) return;
+  applyUnlockAllSkinsIAP() {
+    //check this purchase is needed. There is a bug in the purchase plugin used, products will keep calling the 'approved' function even if the product is 'finished'
+    //https://github.com/j3k0/cordova-plugin-purchase/issues/483
+    var lockedBirds = DataAccess.getLockedBirds(this.game);
+    if(lockedBirds.length == 0) return;
 
+    const unlockAlertText= 'All skins unlocked!!\n\n' + this.game.strings.devThankYou;
     alert(unlockAlertText);
+    this.buyBtn.visible = false;
 
     //unlock sprites
-    unlockedBirds = unlockedBirds.concat(arrayOfBirdIds);
-    DataAccess.setConfig('unlockedBirdSprites', unlockedBirds);
+    var allBirds = DataAccess.getConfig('unlockedBirdSprites').concat(lockedBirds);
+    DataAccess.setConfig('unlockedBirdSprites', allBirds);
 
     //display new unlocks
     this.showUnlockedBirds();
@@ -107,6 +108,11 @@ export default class Stats extends Phaser.State {
 
     this.stateBtns.height = Math.min(this.game.height * 0.2, this.stateBtns.height);
     this.stateBtns.scale.x = this.stateBtns.scale.y;
+
+    if (this.buyBtn){
+      this.buyBtn.height = Math.min(this.game.height * 0.1, this.stateBtns.height/2);
+      this.buyBtn.scale.x = this.buyBtn.scale.y;
+    }
   }
 
   positionDisplayObjects() {
@@ -126,6 +132,11 @@ export default class Stats extends Phaser.State {
 
     this.maxLvl.top = this.maxScore.top;
     this.maxLvl.right = this.birdGrid.right;
+
+    if (this.buyBtn){
+      this.buyBtn.right = this.game.world.width - this.game.dimen.margin.sideOfScreen;
+      this.buyBtn.bottom = this.game.world.height - this.game.dimen.margin.sideOfScreen;
+    }
 
     //check if trying to position grid in middle has pushed things into bad positions. If so, reposition them
     if (this.medals.bottom > this.stateBtns.top || this.maxScore.top < 0) {
@@ -228,16 +239,7 @@ export default class Stats extends Phaser.State {
         this.prevAlert = new Alert(this.game, unlockIntructions + '\n' + this.game.strings.skinSet);
         DataAccess.setConfig('playerFrame', birdId);
       } else { //locked (not unlocked yet)
-        var buyBtn = null;
-        const isPurchasableBird = this.game.animationInfo.preyIds.includes(birdId) || this.game.animationInfo.predatorIds.includes(birdId);
-        if (isPurchasableBird && !DataAccess.getConfig('unlockedBirdSprites').includes(birdId)) {
-          buyBtn = this.add.button(0, 0, this.game.spritesheetKey, function() {
-            const productId = (this.game.animationInfo.predatorIds.includes(birdId)) ? this.predatorID : this.preyID;
-            store.order(productId);
-          }, this, 'buyPressed', 'buy', 'buyPressed', 'buy');
-        }
-
-        this.prevAlert = new Alert(this.game, unlockIntructions, buyBtn);
+        this.prevAlert = new Alert(this.game, unlockIntructions);
       }
 
       this.prevAlert.top = this.medals.top;
@@ -248,15 +250,14 @@ export default class Stats extends Phaser.State {
     const unlockCriteria = this.game.integers.skinUnlockCriteria[birdId];
     var str = '';
 
-    //check for the purchasable items first
-    if (this.game.animationInfo.preyIds.includes(birdId)) str = this.game.strings.unlocks.purchase.replace('_', this.game.strings.preyIAPName);
-    else if (this.game.animationInfo.predatorIds.includes(birdId)) str = this.game.strings.unlocks.purchase.replace('_', this.game.strings.predatorIAPName);
-    //check for unlockables next
-    else if (unlockCriteria) {
+    //check for unlockable
+    if (unlockCriteria) {
       if (unlockCriteria.medal) str = this.game.strings.unlocks.medal.replace('_', unlockCriteria.medal['#'].toLocaleString()).replace('_', this.game.strings.medals[unlockCriteria.medal.type]);
       else if (unlockCriteria.maxScore) str = this.game.strings.unlocks.maxScore.replace('_', unlockCriteria.maxScore.toLocaleString());
       else if (unlockCriteria.timesEaten) str = this.game.strings.unlocks.timesEaten.replace('_', unlockCriteria.timesEaten.toLocaleString());
       else if (unlockCriteria.totalMedals) str = this.game.strings.unlocks.totalMedals.replace('_', unlockCriteria.totalMedals.toLocaleString());
+      else if (unlockCriteria.level) str = this.game.strings.unlocks.level.replace('_', unlockCriteria.level.toLocaleString());
+      else if (unlockCriteria.comboCount) str = this.game.strings.unlocks.comboCount.replace('_', unlockCriteria.comboCount.toLocaleString());
       else if (unlockCriteria.default) str = this.game.strings.unlocks.default;
     }
 

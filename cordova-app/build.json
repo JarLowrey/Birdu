@@ -1,0 +1,11 @@
+{
+    "android": {
+        "release": {
+            "keystore": "~/Desktop/JTronLabs",
+            "storePassword": "",
+            "alias": "Birdu",
+            "password" : "",
+            "keystoreType": ""
+        }
+    }
+}

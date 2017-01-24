@@ -68,10 +68,11 @@
     "start": "gulp",
     "test-dist": "npm run dist && browser-sync start -c gulpfile.js/bs-config.js",
 
-    "cordovaWTF": "rm -rf cordova-app/plugins && rm -rf cordova-app/platforms && cd cordova-app && ../node_modules/.bin/cordova platform add android && ../node_modules/.bin/cordova platform add windows && ../node_modules/.bin/cordova platform add ios && cd .. && npm run-script dist",
-    "cordovaUpdate": "npm update --save-dev node_modules/cordova && echo 'Local Dev Cordova Version:' && node_modules/.bin/cordova -v && cd cordova-app && ../node_modules/.bin/cordova-check-plugins",
+    "update": "npm update --dev && cd cordova-app && ../node_modules/.bin/cordova-check-plugins",
 
-    "build-hard-android": "npm run-script cordovaWTF && cd cordova-app && ../node_modules/.bin/cordova build android",
+    "cordovaReset": "rm -rf cordova-app/plugins && rm -rf cordova-app/platforms && cd cordova-app && ../node_modules/.bin/cordova platform add android && ../node_modules/.bin/cordova platform add windows && ../node_modules/.bin/cordova platform add ios && cd .. && npm run-script dist",
+
+    "build-hard-android": "npm run-script cordovaReset && cd cordova-app && ../node_modules/.bin/cordova build android",
     "run-android": "echo NOTE: Must have build.json with key path, pass, alias, and aliasPass in your cordova-app dir && npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --release && adb logcat chromium:D SystemWebViewClient:D *:S ",
     "emulate-android": "echo NOTE: Must have build.json with key path, pass, alias, and aliasPass in your cordova-app dir && npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --release --emulate --target=nexus4api19 && adb logcat chromium:D SystemWebViewClient:D *:S",
     "run-android-previous": "npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --nobuild && adb logcat chromium:D SystemWebViewClient:D *:S"

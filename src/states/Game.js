@@ -111,8 +111,8 @@ export default class Game extends Phaser.State {
 
     //combo variables
     this.comboBaseScoreFromEating = 0; //score that is added by eating birds in a combo series. Nothing added from the combo itself
-    this.comboCount = 0;
     this.comboTimer = null;
+    //set comboCount in loadLevel
 
     //load audio
     this.add.audio('tweet').play();
@@ -191,7 +191,6 @@ export default class Game extends Phaser.State {
 
       if (this.game.player.alive) {
         this.saveLevel();
-        this.saveSprites();
       }
 
       this.game.paused = true; //actually pause the game
@@ -259,15 +258,15 @@ export default class Game extends Phaser.State {
   }
 
   saveLevel() {
+    //save general variables
     DataAccess.setConfig('score', this.score + this._scoreBuffer);
-    DataAccess.setConfig('level', this.level);
     this._scoreBuffer = 0;
-  }
+    DataAccess.setConfig('level', this.level);
+    DataAccess.setConfig('comboCount', this.comboCount);
 
-  saveSprites() {
+    //save all sprite values
     const allSprites = this.game.spritePools.serialize();
     DataAccess.setConfig('sprites', allSprites);
-
     DataAccess.setConfig('player', this.game.player.serialize());
   }
 
@@ -277,9 +276,11 @@ export default class Game extends Phaser.State {
       this.game.player.deserialize(playerInfo);
       this.score = DataAccess.getConfig('score');
       this.level = DataAccess.getConfig('level');
+      this.comboCount = DataAccess.getConfig('comboCount');
     } else {
       this.score = 0;
       this.level = 0;
+      this.comboCount = 0;
     }
 
     this._scoreBuffer = 0;

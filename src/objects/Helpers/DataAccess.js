@@ -35,6 +35,7 @@ export default class DataAccess {
 
     DataAccess.setConfig('maxScore', DataAccess.getConfig('maxScore') || 0);
     DataAccess.setConfig('maxLevel', DataAccess.getConfig('maxLevel') || 0);
+    DataAccess.setConfig('comboCount', DataAccess.getConfig('comboCount') || 0);
 
     DataAccess.setConfig('playerFrame', DataAccess.getConfig('playerFrame') || game.animationInfo.defaultPlayerFrame);
     DataAccess.setConfig('unlockedBirdSprites', DataAccess.getConfig('unlockedBirdSprites') || [game.animationInfo.defaultPlayerFrame]);

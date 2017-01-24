@@ -125,6 +125,7 @@ export default class Gameover extends Phaser.State {
       return a + b;
     }, 0);
     const kills = DataAccess.getConfig('kills');
+    const numCombos = DataAccess.getConfig('comboCount');
     const maxScore = DataAccess.getConfig('maxScore');
     //const level = DataAccess.getConfig('level');
     const prevUnlocks = DataAccess.getConfig('unlockedBirdSprites');
@@ -139,6 +140,7 @@ export default class Gameover extends Phaser.State {
           else if (unlockCriteria.maxScore && maxScore >= unlockCriteria.maxScore) idsToAddToUnlockSprites.push(i);
           else if (unlockCriteria.timesEaten && kills[i] >= unlockCriteria.timesEaten) idsToAddToUnlockSprites.push(i);
           else if (unlockCriteria.totalMedals && numMedals >= unlockCriteria.totalMedals) idsToAddToUnlockSprites.push(i);
+          else if (unlockCriteria.comboCount && numCombos >= unlockCriteria.comboCount) idsToAddToUnlockSprites.push(i);
         }
       }
     }

@@ -74,6 +74,7 @@
 
     "build-hard-android": "npm run-script cordovaReset && cd cordova-app && ../node_modules/.bin/cordova build android",
     "run-android": "echo NOTE: Must have build.json with key path, pass, alias, and aliasPass in your cordova-app dir && npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --release && adb logcat chromium:D SystemWebViewClient:D *:S ",
+    "debug-android": "echo NOTE: Must have build.json with key path, pass, alias, and aliasPass in your cordova-app dir && npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --debug && adb logcat chromium:D SystemWebViewClient:D *:S ",
     "emulate-android": "echo NOTE: Must have build.json with key path, pass, alias, and aliasPass in your cordova-app dir && npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --release --emulate --target=nexus4api19 && adb logcat chromium:D SystemWebViewClient:D *:S",
     "run-android-previous": "npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --nobuild && adb logcat chromium:D SystemWebViewClient:D *:S"
   }

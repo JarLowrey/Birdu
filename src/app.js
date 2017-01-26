@@ -11,6 +11,9 @@ import 'babel-polyfill';
 // Import game states.
 import * as states from './states';
 
+//import play services handling
+import GooglePlayGameServices from './GooglePlayGameServices';
+
 export function init() {
   const game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO);
 
@@ -19,10 +22,15 @@ export function init() {
     .entries(states)
     .forEach(([key, state]) => game.state.add(key, state));
 
+  registerCordovaEvents(game);
+  GooglePlayGameServices.authenticate();
 
+  game.state.start('Boot');
 
+  return game;
+}
 
-
+function registerCordovaEvents(game){
   //define CordovaApp events here so they can have access the the 'game' object when called
   document.addEventListener('pause',
     function() {
@@ -35,13 +43,11 @@ export function init() {
       if (game.bgMusic) game.bgMusic.resume();
     },
     false);
-
-
-
-
-
-
-  game.state.start('Boot');
-
-  return game;
 }
+
+/*
+export function google_signin_callback(auth){
+  console.log('window.app.google_play_signed_in called')
+  GooglePlayGameServices.signed_in(auth);
+}
+*/

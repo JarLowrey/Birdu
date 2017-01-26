@@ -104,7 +104,7 @@ export default class Preload extends Phaser.State {
 
   onLoadComplete() {
     this.setJson();
-    DataAccess.initializeSavedData(this.game);
+    DataAccess.initializeSave(this.game);
 
     this.game.spritesheetKey = 'spritesheet';
     this.loadingText.setText('100%');

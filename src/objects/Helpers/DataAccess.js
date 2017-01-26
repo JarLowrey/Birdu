@@ -39,14 +39,21 @@ export default class DataAccess {
     return lockedBirds;
   }
 
-  static initializeSavedData(game) {
-    DataAccess.setConfig('score', DataAccess.getConfig('score') || 0);
-    DataAccess.setConfig('level', DataAccess.getConfig('level') || 0);
-    DataAccess.setConfig('sprites', DataAccess.getConfig('sprites') || []);
+  static resetGame(){
+    DataAccess.setConfig('score', 0);
+    DataAccess.setConfig('level', 0);
+    DataAccess.setConfig('sprites', []);
+    DataAccess.setConfig('comboCount', 0);
+  }
+
+  static initializeSave(game) {
+    let initGame = DataAccess.getConfig('score')===undefined || DataAccess.getConfig('level')===undefined || DataAccess.getConfig('sprites')===undefined || DataAccess.getConfig('comboCount')===undefined;
+    if(initGame){
+      DataAccess.resetGame();
+    }
 
     DataAccess.setConfig('maxScore', DataAccess.getConfig('maxScore') || 0);
     DataAccess.setConfig('maxLevel', DataAccess.getConfig('maxLevel') || 0);
-    DataAccess.setConfig('comboCount', DataAccess.getConfig('comboCount') || 0);
 
     DataAccess.setConfig('playerFrame', DataAccess.getConfig('playerFrame') || game.animationInfo.defaultPlayerFrame);
     DataAccess.setConfig('unlockedBirdSprites', DataAccess.getConfig('unlockedBirdSprites') || [game.animationInfo.defaultPlayerFrame]);

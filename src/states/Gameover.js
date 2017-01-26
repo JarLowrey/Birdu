@@ -24,6 +24,8 @@ export default class Gameover extends Phaser.State {
     this.positionDisplayObjects();
     this.unlockedBirds = this.add.group();
     this.displayNewlyUnlockedSprites();
+
+    DataAccess.resetGame();
   }
 
   positionDisplayObjects() {

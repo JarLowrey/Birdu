@@ -6,8 +6,37 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0, height=device-height, width=device-width" />
 
-  <!-- Standardised web app manifest -->
-  <link rel="manifest" href="manifest.json">
+  <!-- Allow API access - https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-whitelist/ -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src data: ws://127.0.0.1:3000 'self' 'unsafe-inline' https://accounts.google.com/;"> -->
+
+  <!--
+    Google Play Game Services - https://developers.google.com/games/services/web/clientsetup
+    sign in - https://developers.google.com/identity/sign-in/web/sign-in
+  -->
+  <!--
+  <script>
+  function google_signin(auth){
+    console.log('asdasasdasdasd')
+    window.app.google_signin_callback(auth);
+  }
+  function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail());
+    window.app.google_signin_callback(googleUser);
+
+  }
+  </script>
+  <meta name="google-signin-client_id" content="109695933537-6ggk3lds5nqrs95d4e76rbd8difp9qgb.apps.googleusercontent.com" />
+  <meta name="google-signin-cookiepolicy" content="none" />
+  <meta name="google-signin-callback" content="google_signin" />
+  <meta name="google-signin-scope" content="https://www.googleapis.com/auth/games" />
+  <script src="https://apis.google.com/js/platform.js"></script>
+-->
+  <script src="https://apis.google.com/js/client.js" async defer></script>
+
 
   <link rel="shortcut icon" href="favicon.ico">
 
@@ -40,7 +69,7 @@
     }
   </style>
 
-  <!-- Preload TTF fonts -->
+  <!-- Preload TTF fonts, stylize google sign-in -->
   <style>
     @font-face {
       font-family: "papercuts";
@@ -48,11 +77,6 @@
     }
 
     .hide {
-      /*
-      position: absolute;
-      left: -5000px;
-      color: white;
-      */
       background-color: black;
       height: 0;
     }
@@ -60,10 +84,15 @@
     .load-papercuts {
       font-family: "papercuts";
     }
+    .g-signin2{
+      position: absolute;
+    }
   </style>
 </head>
 
 <body>
+  <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div>--
+
   <!--  This class is here to force .ttf fonts to load for the game (Phaser does not support generic .ttf loading)  -->
   <p class="load-papercuts hide">Some text needed to pre-load font family</p>
 
@@ -82,6 +111,7 @@
 
   <!-- Start the game from the app.js's init function -->
   <script>
+    console.log(gapi);
     const runningCordova = !!window.cordova;
     if (runningCordova) {
       document.addEventListener("deviceready", window.app.init);

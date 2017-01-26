@@ -8,9 +8,10 @@
         James Lowrey (JTronLabs)
     </author>
     <content src="index.html" />
+    <!-- APIs & other sites must be whitelisted. If they are not your requests will silently fail - https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-whitelist/ -->
     <plugin name="cordova-plugin-whitelist" spec="1" />
-    <access origin="*" />
-    <allow-intent href="sms:*" />
+    <access origin="https://*.google.com/*" /> <!-- Google subdomains (apis, accounts, etc) and URLs are safe-->
+    <!-- -->
     <platform name="android">
         <preference name="android-minSdkVersion" value="16" />
         <preference name="android-manifest/application/activity/@android:theme" value="@android:style/Theme.Black.NoTitleBar" />

@@ -11,9 +11,9 @@
 env:
   browser: true                       # Enable Browser global variables
   es6: true
-  
+
 parserOptions:
-  ecmaVersion: 2016                   # Validate ECMAScript 2016 features
+  ecmaVersion: 8                   # Validate ECMAScript 2016 features
   sourceType: module                  # Allow ECMAScript modules
 
 globals:

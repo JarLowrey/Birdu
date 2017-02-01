@@ -111,13 +111,7 @@
 
   <!-- Start the game from the app.js's init function -->
   <script>
-    console.log(gapi);
-    const runningCordova = !!window.cordova;
-    if (runningCordova) {
-      document.addEventListener("deviceready", window.app.init);
-    } else {
-      window.app.init();
-    }
+    window.app.registerGame();
   </script>
 </body>
 

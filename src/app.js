@@ -14,7 +14,16 @@ import * as states from './states';
 //import play services handling
 import GooglePlayGameServices from './GooglePlayGameServices';
 
-export function init() {
+export function registerGame() {
+  const runningCordova = !!window.cordova;
+  if (runningCordova) {
+    document.addEventListener('deviceready', init);
+  } else {
+    init();
+  }
+}
+
+function init() {
   const game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO);
 
   // Dynamically add all required game states.
@@ -30,7 +39,7 @@ export function init() {
   return game;
 }
 
-function registerCordovaEvents(game){
+function registerCordovaEvents(game) {
   //define CordovaApp events here so they can have access the the 'game' object when called
   document.addEventListener('pause',
     function() {

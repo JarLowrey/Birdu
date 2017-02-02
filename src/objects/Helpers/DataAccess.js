@@ -27,9 +27,9 @@ export default class DataAccess {
     return value;
   }
 
-  static getLockedBirds(game){
-    var allBirdIds=new Set();
-    for(let i=0;i<=game.animationInfo.maxBirdFrame;i++){
+  static getLockedBirds(game) {
+    var allBirdIds = new Set();
+    for (let i = 0; i <= game.animationInfo.maxBirdFrame; i++) {
       allBirdIds.add(i);
     }
 
@@ -39,7 +39,7 @@ export default class DataAccess {
     return lockedBirds;
   }
 
-  static resetGame(){
+  static resetGame() {
     DataAccess.setConfig('score', 0);
     DataAccess.setConfig('level', 0);
     DataAccess.setConfig('sprites', []);
@@ -47,8 +47,8 @@ export default class DataAccess {
   }
 
   static initializeSave(game) {
-    let initGame = DataAccess.getConfig('score')===undefined || DataAccess.getConfig('level')===undefined || DataAccess.getConfig('sprites')===undefined || DataAccess.getConfig('comboCount')===undefined;
-    if(initGame){
+    let initGame = DataAccess.getConfig('score') === undefined || DataAccess.getConfig('level') === undefined || DataAccess.getConfig('sprites') === undefined || DataAccess.getConfig('comboCount') === undefined;
+    if (initGame) {
       DataAccess.resetGame();
     }
 
@@ -70,26 +70,6 @@ export default class DataAccess {
 
     const settings = DataAccess.setConfig('settings', DataAccess.getConfig('settings') || game.integers.defaultSettings);
     game.sound.volume = Number(!settings.muted);
-
-    this.overrideGameFunctionsToCheckForSettings(game);
-  }
-
-  static overrideGameFunctionsToCheckForSettings(game) {
-    //override Default functions to take advantage of the Settings
-    //Override Phaser's Camera Shake
-    const orginialShake = game.camera.shake;
-    game.camera.shake = function() {
-      if (DataAccess.getConfig('settings').screenShake) orginialShake.bind(this)(...arguments);
-    };
-
-    //----- FOR VIBRATE TO WORK SYSTEM VOLUME CANNOT BE MUTED (tested in Android)! -----
-    //override Navigator's Vibrate
-    const orginialVibrate = navigator.vibrate;
-    navigator.vibrate = function() {
-      if (DataAccess.getConfig('settings').vibration) {
-        orginialVibrate.bind(this)(...arguments);
-      }
-    };
   }
 
 }

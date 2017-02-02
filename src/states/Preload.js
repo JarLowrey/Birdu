@@ -21,7 +21,6 @@ export default class Preload extends Phaser.State {
     this.game.load.onLoadComplete.addOnce(this.onLoadComplete, this);
 
     this.game.load.pack('game', null, assets);
-    DbAccess.open();
   }
 
   create() {
@@ -107,6 +106,8 @@ export default class Preload extends Phaser.State {
   onLoadComplete() {
     this.setJson();
     DataAccess.initializeSave(this.game);
+    DbAccess.open(this.game);
+    this.overrideGameFunctionsToCheckForSettings();
 
     this.game.spritesheetKey = 'spritesheet';
     this.loadingText.setText('100%');
@@ -118,5 +119,26 @@ export default class Preload extends Phaser.State {
     if (this.splashScreenOver && this.load.hasLoaded) { //splash screen has been shown for a minimum amount of time, and loading assets is finished
       this.state.start('Menu');
     }
+  }
+
+
+  overrideGameFunctionsToCheckForSettings() {
+    //override Default functions to take advantage of the Settings
+    //Override Phaser's Camera Shake
+    const orginialShake = this.game.camera.shake;
+    this.game.camera.shake = async function() {
+      let useShake = await DbAccess.getConfig('settings').screenShake;
+      if (useShake) orginialShake.bind(this)(...arguments);
+    };
+
+    //----- FOR VIBRATE TO WORK SYSTEM VOLUME CANNOT BE MUTED (tested in Android)! -----
+    //override Navigator's Vibrate
+    const orginialVibrate = navigator.vibrate;
+    navigator.vibrate = async function() {
+      let useVibration = await DataAccess.getConfig('settings').vibration;
+      if (useVibration) {
+        orginialVibrate.bind(this)(...arguments);
+      }
+    };
   }
 }

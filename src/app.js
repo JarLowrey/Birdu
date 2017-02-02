@@ -12,7 +12,7 @@ import 'babel-polyfill';
 import * as states from './states';
 
 //import play services handling
-import GooglePlayGameServices from './GooglePlayGameServices';
+//import GooglePlayGameServices from './GooglePlayGameServices';
 
 export function registerGame() {
   const runningCordova = !!window.cordova;
@@ -32,7 +32,7 @@ function init() {
     .forEach(([key, state]) => game.state.add(key, state));
 
   registerCordovaEvents(game);
-  GooglePlayGameServices.authenticate();
+  //GooglePlayGameServices.authenticate();
 
   game.state.start('Boot');
 

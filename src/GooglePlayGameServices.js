@@ -12,7 +12,7 @@ do not mangle index.html, as the callback is separated from html meta tag
 
 Resources:
  Client Setup : https://developers.google.com/games/services/web/clientsetup
- Web REST guide : https://developers.google.com/games/services/web/api/snapshots/get
+ Web REST guide : https://developers.google.com/games/services/web/api/
  Authentication guide : https://developers.google.com/api-client-library/javascript/features/authentication
                        https://developers.google.com/identity/protocols/OAuth2UserAgent
                        https://developers.google.com/identity/protocols/OAuth2WebServer#incrementalAuth
@@ -41,14 +41,17 @@ export default class GooglePlayGameServices {
   */
   //use gapi
   //https://developers.google.com/api-client-library/javascript/start/start-js
-  static async authenticate() {
+  static authenticate() {
     GooglePlayGameServices.scopes = 'https://www.googleapis.com/auth/games https://www.googleapis.com/auth/drive.appdata';
     GooglePlayGameServices.clientId = '109695933537-6ggk3lds5nqrs95d4e76rbd8difp9qgb.apps.googleusercontent.com';
-    if (window.cordova) {
-      GooglePlayGameServices._googleCordovaPluginSilentLogin();
-    } else {
-      gapi.load('client', GooglePlayGameServices._startGAPI);
-    }
+    gapi.load('client', GooglePlayGameServices._startGAPI);
+    /*
+        if (window.cordova) {
+          GooglePlayGameServices._googleCordovaPluginSilentLogin();
+        } else {
+          gapi.load('client', GooglePlayGameServices._startGAPI);
+        }
+        */
   }
 
   static _googleCordovaPluginSilentLogin() {
@@ -57,9 +60,7 @@ export default class GooglePlayGameServices {
         'webClientId': GooglePlayGameServices.clientId, // optional clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
         'offline': true, // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
       },
-      function(obj) {
-        console.log(obj); // do something useful instead of alerting
-      },
+      GooglePlayGameServices.successfulLogin,
       function(error) {
         if (error === 4) {
           GooglePlayGameServices._googleCordovaPluginLogin();
@@ -76,9 +77,7 @@ export default class GooglePlayGameServices {
         'webClientId': GooglePlayGameServices.clientId, // optional clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
         'offline': true, // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
       },
-      function(obj) {
-        console.log(obj); // do something useful instead of alerting
-      },
+      GooglePlayGameServices.successfulLogin,
       function(error) {
         console.log('error: ');
         console.log(error);
@@ -86,22 +85,97 @@ export default class GooglePlayGameServices {
     );
   }
 
+  static successfulLogin(obj) {
+    GooglePlayGameServices.getAcheivementsREST();
+    console.log(obj);
+  }
+
   static async _startGAPI() {
     //https://developers.google.com/api-client-library/javascript/start/start-js
-    let tmp = gapi.client.init({
+    let initPromie = gapi.client.init({
+      'apiKey': 'AIzaSyCSQd81S1Tg89oPL33Cd3YaTFIBz2RGqsE',
       'clientId': GooglePlayGameServices.clientId,
       'scope': GooglePlayGameServices.scopes, //games: acheivements, leaderboards, etc, drive.appdata: save backups
     });
-    await tmp;
+    await initPromie;
     let GoogleAuth = gapi.auth2.getAuthInstance();
     //console.log('is signed in: '+ GoogleAuth.isSignedIn.get());
 
-    GoogleAuth.signIn({
+    let signInPromise = GoogleAuth.signIn({
       'app_package_name': 'com.jtronlabs.birdu',
       'fetch_basic_profile': false,
       'prompt': 'select_account'
     });
+    await signInPromise;
+    //Yay! Signed in!
+    GooglePlayGameServices.successfulLogin();
+  }
 
+  static async getAcheivementsREST() {
+    let a = gapi.client.request({
+      'path': 'https://www.googleapis.com/games/v1/achievements',
+      'method': 'GET',
+    });
+    await a;
+    console.log(a);
+
+
+
+
+
+    //setup request
+    var req = new XMLHttpRequest();
+    req.open('GET', 'https://www.googleapis.com/games/v1/achievements', true);
+
+    //setup request completion functions
+    req.onload = function(e) {
+      console.log(req);
+      console.log('LOGGED GET ACHEIVEMENTS');
+
+      if (req.readyState == 4) { //readyState = DONE - https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState
+        if (req.status == 200) {
+          console.log(req.response);
+        } else {
+          console.log('status =' + req.status);
+        }
+      }
+
+    };
+
+    //send request!
+    req.send(null);
+
+  }
+
+  static updateAcheivementsREST() {
+    //setup request
+    var req = new XMLHttpRequest();
+    req.open('POST', 'https://www.googleapis.com/games/v1/achievements/updateMultiple', true);
+    req.setRequestHeader('Content-Type', 'application/json');
+
+    //req.withCredentials = true; //https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
+    //setup request completion functions
+    req.onload = function(e) {
+      /*
+      if (req.readyState == 4) { //readyState = DONE - https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState
+        if (req.status == 200) {
+          console.log(req.response);
+        } else {
+          console.log('status =' + req.status);
+        }
+      }
+      */
+    };
+
+    //send request!
+    req.send(JSON.stringify({
+      'kind': 'games#achievementUpdateMultipleRequest',
+      'updates': [{
+        'kind': 'games#achievementUpdateRequest',
+        'achievementId': 'CgkI4biM05gDEAIQAg',
+        'updateType': 'UNLOCK'
+      }]
+    }));
   }
   /*
   //use oauth2 directly

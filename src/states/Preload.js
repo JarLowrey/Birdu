@@ -10,6 +10,7 @@
 import assets from '../assets';
 
 import DataAccess from '../objects/Helpers/DataAccess';
+import DbAccess from '../objects/Helpers/DbAccess';
 
 export default class Preload extends Phaser.State {
 
@@ -20,6 +21,7 @@ export default class Preload extends Phaser.State {
     this.game.load.onLoadComplete.addOnce(this.onLoadComplete, this);
 
     this.game.load.pack('game', null, assets);
+    DbAccess.open();
   }
 
   create() {

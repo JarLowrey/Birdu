@@ -99,7 +99,7 @@ export default class DbAccess {
     // to access one of the object stores that are in the scope of this
     // transaction.
     return new Promise(function(resolve, reject) {
-      let store = DbAccess._db.transaction(DbAccess.configObjStoreName, 'readwrite').objectStore(DbAccess.configObjStoreName).add(value, key);
+      let store = DbAccess._db.transaction(DbAccess.configObjStoreName, 'readwrite').objectStore(DbAccess.configObjStoreName).put(value, key);
       store.onsuccess = function(event) {
         resolve(event.target.result);
       };

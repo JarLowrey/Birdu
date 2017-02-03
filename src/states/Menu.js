@@ -5,7 +5,7 @@
  */
 import Bird from '../objects/Sprites/Bird';
 
-import DataAccess from '../objects/Helpers/DataAccess';
+import DbAccess from '../objects/Helpers/DbAccess';
 import FactoryUi from '../objects/Helpers/FactoryUi';
 
 export default class Menu extends Phaser.State {
@@ -18,8 +18,18 @@ export default class Menu extends Phaser.State {
     this.titleText = this.add.text(0, 0, 'B I R D U', this.game.fonts.title);
     this.titleText.anchor.setTo(0.5, 0.5);
 
+    this.setupMenuSprite();
+
+    //start game's music
+    this.game.bgMusic = this.add.audio('background_music');
+    this.game.invincibleMusic = this.add.audio('background_music');
+    this.game.bgMusic.loopFull();
+
+  }
+
+  async setupMenuSprite() {
     //main image/logo + its animationsphaser
-    this.sprite = this.add.sprite(0, 0, this.game.spritesheetKey, Bird.birdFrameName(DataAccess.getConfig('playerFrame'), 1));
+    this.sprite = this.add.sprite(0, 0, this.game.spritesheetKey, Bird.birdFrameName(await DbAccess.getConfig('playerFrame'), 1));
     this.sprite.width = this.game.dimen.width.menuSprite;
     this.sprite.scale.y = this.sprite.scale.x;
     this.sprite.anchor.setTo(0.5, 0.5);
@@ -27,11 +37,6 @@ export default class Menu extends Phaser.State {
     this.add.tween(this.sprite).to({
       angle: 20
     }, 1000, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
-
-    //start game's music
-    this.game.bgMusic = this.add.audio('background_music');
-    this.game.invincibleMusic = this.add.audio('background_music');
-    this.game.bgMusic.loopFull();
 
     this.positionDisplayObjects();
   }

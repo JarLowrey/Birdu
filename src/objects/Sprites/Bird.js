@@ -3,7 +3,7 @@
  * contains properties common to all children sprites in this game
  */
 import ExtendedSprite from '../Sprites/ExtendedSprite';
-import DataAccess from '../Helpers/DataAccess';
+import DbAccess from '../Helpers/DbAccess';
 
 export default class Bird extends ExtendedSprite {
   static className() {
@@ -64,7 +64,7 @@ export default class Bird extends ExtendedSprite {
       largeBird.setSizeFromWidth(widthInc + largeBird.width);
       largeBird.wiggle();
 
-      game.meat.showCrumbs(smallBird.x,smallBird.y,smallBird.width,smallBird.height);
+      game.meat.showCrumbs(smallBird.x, smallBird.y, smallBird.width, smallBird.height);
       smallBird.fancyKill();
     }
 
@@ -75,13 +75,13 @@ export default class Bird extends ExtendedSprite {
   }
 
   //don't override the default kill() method, as that will cause particles and effects to be rendered when enemies are killed offscreen
-  fancyKill() {
+  async fancyKill() {
     super.kill();
 
-    if (DataAccess.getConfig('playerFrame') != this.frameId) {
-      const numKills = DataAccess.getConfig('kills');
+    if (await DbAccess.getConfig('playerFrame') != this.frameId) {
+      const numKills = await DbAccess.getConfig('kills');
       numKills[this.frameId]++;
-      DataAccess.setConfig('kills', numKills); //TODO refactor out this slow storage access for cache access, save only once per game to slow storage
+      DbAccess.setConfig('kills', numKills); //TODO refactor out this slow storage access for cache access, save only once per game to slow storage
     }
   }
 
@@ -90,21 +90,21 @@ export default class Bird extends ExtendedSprite {
 
     var frameNames = [];
     for (var i = 1; i <= numFrames; i++) {
-      frameNames.push(Bird.birdFrameName(spriteNum,i));
+      frameNames.push(Bird.birdFrameName(spriteNum, i));
     }
 
     return frameNames;
   }
-  static birdFrameName(spriteNum,frameNum){
-    if(frameNum != undefined){
-      return 'b'+spriteNum+'-'+frameNum;
-    }else{
-      return 'b'+spriteNum;
+  static birdFrameName(spriteNum, frameNum) {
+    if (frameNum != undefined) {
+      return 'b' + spriteNum + '-' + frameNum;
+    } else {
+      return 'b' + spriteNum;
     }
   }
 
   createAllPotentialAnimations() {
-    for(var i=0;i<this.game.animationInfo.maxBirdFrame;i++){
+    for (var i = 0; i < this.game.animationInfo.maxBirdFrame; i++) {
       const animationFrames = Bird.getFlyingFrames(i, this.game);
       this.animations.add(Bird.birdFrameName(i), animationFrames, this.game.animationInfo.flapFPS * (animationFrames.length / 4), true);
     }

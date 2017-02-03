@@ -67,7 +67,7 @@ export default class DbAccess {
       store.transaction.onerror = function(event) {
         console.log(event);
       };
-    }
+    };
   }
 
 

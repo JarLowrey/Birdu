@@ -5,7 +5,7 @@
  */
 import Bird from '../Sprites/Bird';
 import Poop from '../Sprites/Poop';
-import DataAccess from '../Helpers/DataAccess';
+import DbAccess from '../Helpers/DbAccess';
 
 export default class Enemy extends Bird {
   static className() {
@@ -62,13 +62,13 @@ export default class Enemy extends Bird {
     this.setAtSidesOfScreen();
   }
 
-  fancyKill() {
+  async fancyKill() {
     super.fancyKill();
 
     //increment the number of kills on this type of bird/animal
-    const kills = DataAccess.getConfig('kills');
+    const kills = await DbAccess.getConfig('kills');
     kills[this.frameId]++;
-    DataAccess.setConfig('kills', kills);
+    DbAccess.setConfig('kills', kills);
   }
 
   setSpriteSize() {
@@ -92,12 +92,13 @@ export default class Enemy extends Bird {
     return this.speed;
   }
 
-  chooseRandomSpriteSheet() {
+  async chooseRandomSpriteSheet() {
     //get a random non-player bird sprite
+    let playerFrame = this.game.player.frameId;
     var randomEnemyFrame;
     do {
       randomEnemyFrame = Phaser.Math.between(0, this.game.animationInfo.maxBirdFrame);
-    } while (randomEnemyFrame == DataAccess.getConfig('playerFrame'));
+    } while (randomEnemyFrame == playerFrame);
     this.frameId = randomEnemyFrame;
 
     this.animations.play(Bird.birdFrameName(this.frameId));

@@ -5,7 +5,7 @@
  */
 import Bird from '../Sprites/Bird';
 
-import DataAccess from '../Helpers/DataAccess';
+import DbAccess from '../Helpers/DbAccess';
 
 export default class Player extends Bird {
   static className() {
@@ -15,7 +15,7 @@ export default class Player extends Bird {
     return Player.className();
   }
 
-  constructor(game) {
+  constructor(game, frameId) {
     super(game);
 
     this.drag_value = 70;
@@ -28,7 +28,7 @@ export default class Player extends Bird {
     this.anchor.setTo(0.5, 0.5);
 
     // add animations + tweens specific for this sprite, and and play them if needed
-    this.frameId = DataAccess.getConfig('playerFrame');
+    this.frameId = frameId;
     this.animations.add('idling', Bird.getFlyingFrames(this.frameId, this.game), this.game.animationInfo.flapFPS, true);
     this.animations.play('idling');
 
@@ -115,8 +115,8 @@ export default class Player extends Bird {
 
     this.game.state.states.Game.levelupCoin.visible = false;
 
-    DataAccess.setConfig('sprites', []);
-    DataAccess.setConfig('player', null);
+    DbAccess.setConfig('sprites', []);
+    DbAccess.setConfig('player', null);
 
     this.game.spritePools.iterateOverLivingEnemies(function(child) {
       child.gloat();

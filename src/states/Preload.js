@@ -9,7 +9,6 @@
 
 import assets from '../assets';
 
-import DataAccess from '../objects/Helpers/DataAccess';
 import DbAccess from '../objects/Helpers/DbAccess';
 
 export default class Preload extends Phaser.State {
@@ -105,7 +104,6 @@ export default class Preload extends Phaser.State {
 
   onLoadComplete() {
     this.setJson();
-    DataAccess.initializeSave(this.game);
     DbAccess.open(this.game);
     this.overrideGameFunctionsToCheckForSettings();
 
@@ -121,7 +119,6 @@ export default class Preload extends Phaser.State {
     }
   }
 
-
   overrideGameFunctionsToCheckForSettings() {
     //override Default functions to take advantage of the Settings
     //Override Phaser's Camera Shake
@@ -135,7 +132,7 @@ export default class Preload extends Phaser.State {
     //override Navigator's Vibrate
     const orginialVibrate = navigator.vibrate;
     navigator.vibrate = async function() {
-      let useVibration = await DataAccess.getConfig('settings').vibration;
+      let useVibration = await DbAccess.getConfig('settings').vibration;
       if (useVibration) {
         orginialVibrate.bind(this)(...arguments);
       }

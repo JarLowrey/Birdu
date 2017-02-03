@@ -15,15 +15,17 @@ import PieProgress from '../objects/Sprites/PieProgress';
 
 import Player from '../objects/Sprites/Player';
 
-import DataAccess from '../objects/Helpers/DataAccess';
+import DbAccess from '../objects/Helpers/DbAccess';
 import Pools from '../objects/Pools';
 import FactoryUi from '../objects/Helpers/FactoryUi';
 import Meat from '../objects/Helpers/Meat';
 
 export default class Game extends Phaser.State {
 
-  get scoreBuffer(){ return this._scoreBuffer; }
-  set scoreBuffer(newbuffer){
+  get scoreBuffer() {
+    return this._scoreBuffer;
+  }
+  set scoreBuffer(newbuffer) {
     this._scoreBuffer = newbuffer;
     this.updateScoreFromBuffer();
     this.scoreLabelTween.start();
@@ -34,7 +36,16 @@ export default class Game extends Phaser.State {
 
     this.background = FactoryUi.displayBg(this.game);
 
-    this.game.player = new Player(this.game);
+    this.game.spritePools = new Pools(this.game);
+
+    this.setupState();
+  }
+
+  async setupState() {
+    await this.loadLevel();
+
+    let playerFrameId = await DbAccess.getConfig('playerFrame');
+    this.game.player = new Player(this.game, playerFrameId);
     this.add.existing(this.game.player);
 
     this.game.meat = new Meat(this.game);
@@ -82,13 +93,6 @@ export default class Game extends Phaser.State {
 
     this.positionDisplayObjects();
 
-    this.setupState();
-  }
-
-  setupState() {
-    this.game.spritePools = new Pools(this.game);
-
-    this.loadLevel();
     this.game.world.bringToTop(this.pauseText); //bring pause text over top of all sprites created
 
     this.pieProgress.setText(this.level);
@@ -259,24 +263,24 @@ export default class Game extends Phaser.State {
 
   saveLevel() {
     //save general variables
-    DataAccess.setConfig('score', this.score + this._scoreBuffer);
+    DbAccess.setConfig('score', this.score + this._scoreBuffer);
     this._scoreBuffer = 0;
-    DataAccess.setConfig('level', this.level);
-    DataAccess.setConfig('comboCount', this.comboCount);
+    DbAccess.setConfig('level', this.level);
+    DbAccess.setConfig('comboCount', this.comboCount);
 
     //save all sprite values
     const allSprites = this.game.spritePools.serialize();
-    DataAccess.setConfig('sprites', allSprites);
-    DataAccess.setConfig('player', this.game.player.serialize());
+    DbAccess.setConfig('sprites', allSprites);
+    DbAccess.setConfig('player', this.game.player.serialize());
   }
 
-  loadLevel() {
-    const playerInfo = DataAccess.getConfig('player');
+  async loadLevel() {
+    const playerInfo = await DbAccess.getConfig('player');
     if (playerInfo) {
       this.game.player.deserialize(playerInfo);
-      this.score = DataAccess.getConfig('score');
-      this.level = DataAccess.getConfig('level');
-      this.comboCount = DataAccess.getConfig('comboCount');
+      this.score = await DbAccess.getConfig('score');
+      this.level = await DbAccess.getConfig('level');
+      this.comboCount = await DbAccess.getConfig('comboCount');
     } else {
       this.score = 0;
       this.level = 0;
@@ -285,17 +289,17 @@ export default class Game extends Phaser.State {
 
     this._scoreBuffer = 0;
 
-    const allSprites = DataAccess.getConfig('sprites');
+    const allSprites = await DbAccess.getConfig('sprites');
     this.game.spritePools.deserialize(allSprites);
   }
 
   updateScoreFromBuffer() {
     if (this._scoreBuffer > 0) {
       var change;
-      if(this._scoreBuffer < 20) {
+      if (this._scoreBuffer < 20) {
         change = this._scoreBuffer;
-      }else{
-        change =  Math.ceil(this._scoreBuffer / 2);
+      } else {
+        change = Math.ceil(this._scoreBuffer / 2);
       }
 
       this.score += change;

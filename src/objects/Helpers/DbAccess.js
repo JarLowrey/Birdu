@@ -4,6 +4,8 @@
  * Co-opted from https://cordova.apache.org/docs/en/latest/cordova/storage/storage.html
  * With help from https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
  */
+import DataAccess from '../Helpers/DataAccess';
+
 export default class DbAccess {
 
   static get dbName() {
@@ -20,54 +22,46 @@ export default class DbAccess {
   }
 
   static open(game) {
+    return new Promise(function(resolve, reject) {
+      var openRequest = window.indexedDB.open(DbAccess.dbName, DbAccess.dbVersion);
 
-    var openRequest = window.indexedDB.open(DbAccess.dbName, DbAccess.dbVersion);
-    openRequest.onerror = function(event) {
-      console.log(event.target.errorCode);
-    };
-    // Database is able to open automatically, no upgrade needed
-    openRequest.onsuccess = function(event) {
-      DbAccess._db = event.target.result;
-    };
-    // Database must be upgraded
-    openRequest.onupgradeneeded = DbAccess.upgrade(game);
-  }
-
-
-  static upgrade(game) {
-    return function(event) {
-      // This is either a newly created database, or a new version number
-      // has been submitted to the open() call.
-      DbAccess._db = event.target.result;
-      DbAccess._db.onerror = function() {
-        console.log(DbAccess._db.errorCode);
+      openRequest.onerror = function(event) {
+        reject(event.target.errorCode);
       };
 
-      // Create an object store and indexes. A key is a data value used to organize
-      // and retrieve values in the object store.
-      // Second param is an object with 'autoIncrement' and/or 'keyPath' keys.
-      // The keyPath option must be a unique property on every JS object (if defined, can only store JS objects).
-      // autoIncrement param generates a key automatically for each new obj stored
-      // If neither are defined you must manually set keys to store/retrieve values
-      var store = DbAccess._db.createObjectStore(DbAccess.configObjStoreName);
-
-      // Define the indexes we want to use. Objects we add to the store don't need
-      // to contain these properties, but they will only appear in the specified
-      // index of they do.
-      //
-      // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/createIndex
-      // syntax: store.createIndex(indexName, keyPath[, parameters]);
-
-      //No indicies currently needed
-
-      // Once the store is created, populate it
-      store.transaction.oncomplete = async function(event) {
-        DbAccess.initSave(game);
+      // Database is able to open automatically, no upgrade needed
+      openRequest.onsuccess = function(event) {
+        DbAccess._db = event.target.result;
+        resolve(DbAccess._db);
       };
-      store.transaction.onerror = function(event) {
-        console.log(event);
+
+      // Database must be upgraded
+      openRequest.onupgradeneeded = function(event) {
+        // This is either a newly created database, or a new version number
+        // has been submitted to the open() call.
+        DbAccess._db = event.target.result;
+        DbAccess._db.onerror = function() {
+          reject(DbAccess._db.errorCode);
+        };
+
+        var store = DbAccess._db.createObjectStore(DbAccess.configObjStoreName);
+
+        //No indicies currently needed
+
+        // Once the store is created, populate it
+        store.transaction.oncomplete = async function(event) {
+          DbAccess.initDb(game).then(function(value) {
+            resolve(DbAccess._db);
+          }, function(reason) {
+            reject(reason);
+          });
+        };
+
+        store.transaction.onerror = function(event) {
+          reject(event);
+        };
       };
-    }
+    });
   }
 
 
@@ -99,7 +93,7 @@ export default class DbAccess {
     // to access one of the object stores that are in the scope of this
     // transaction.
     return new Promise(function(resolve, reject) {
-      let store = DbAccess._db.transaction(DbAccess.configObjStoreName, 'readwrite').objectStore(DbAccess.configObjStoreName).add(value, key);
+      let store = DbAccess._db.transaction(DbAccess.configObjStoreName, 'readwrite').objectStore(DbAccess.configObjStoreName).put(value, key);
       store.onsuccess = function(event) {
         resolve(event.target.result);
       };
@@ -116,33 +110,86 @@ export default class DbAccess {
   /*
     HELPERS FOR THE 'config' OBJECT KEY STORE
   */
-  static resetGame() {
-    DbAccess.setConfig('score', 0);
-    DbAccess.setConfig('level', 0);
-    DbAccess.setConfig('sprites', []);
-    DbAccess.setConfig('comboCount', 0);
+  static async loadGame(game) {
+    await DbAccess.open(game);
+
+    //level stuff
+    let score = DbAccess.getConfig('score');
+    let level = DbAccess.getConfig('level');
+    let sprites = DbAccess.getConfig('sprites');
+    let comboCount = DbAccess.getConfig('comboCount');
+
+    //long term stats
+    let maxScore = DbAccess.getConfig('maxScore');
+    let maxLevel = DbAccess.getConfig('maxLevel');
+    let playerFrame = DbAccess.getConfig('playerFrame');
+    let unlockedBirdSprites = DbAccess.getConfig('unlockedBirdSprites');
+    let kills = DbAccess.getConfig('kills');
+    let medals = DbAccess.getConfig('medals');
+    let config = DbAccess.getConfig('settings');
+
+    //load long-term storage into localStorage cache
+    DataAccess.setCached('score', await score);
+    DataAccess.setCached('level', await level);
+    DataAccess.setCached('sprites', await sprites);
+    DataAccess.setCached('comboCount', await comboCount);
+    DataAccess.setCached('maxScore', await maxScore);
+    DataAccess.setCached('maxLevel', await maxLevel);
+    DataAccess.setCached('playerFrame', await playerFrame);
+    DataAccess.setCached('unlockedBirdSprites', await unlockedBirdSprites);
+    DataAccess.setCached('kills', await kills);
+    DataAccess.setCached('medals', await medals);
+    DataAccess.setCached('settings', await config);
   }
 
-  static initSave(game) {
-    DbAccess.resetGame();
+  static async resetGame() {
+    let score = DbAccess.setConfig('score', 0);
+    let level = DbAccess.setConfig('level', 0);
+    let sprites = DbAccess.setConfig('sprites', []);
+    let comboCount = DbAccess.setConfig('comboCount', 0);
+    let player = DbAccess.setConfig('player', null);
 
-    DbAccess.setConfig('maxScore', 0);
-    DbAccess.setConfig('maxLevel', 0);
-    DbAccess.setConfig('playerFrame', game.animationInfo.defaultPlayerFrame);
-    DbAccess.setConfig('unlockedBirdSprites', [game.animationInfo.defaultPlayerFrame]);
+    await score;
+    await level;
+    await sprites;
+    await comboCount;
+    await player;
+
+    return null;
+  }
+
+  static async initDb(game) {
+    let resetGame = DbAccess.resetGame();
+
+    let maxScore = DbAccess.setConfig('maxScore', 0);
+    let maxLevel = DbAccess.setConfig('maxLevel', 0);
+    let playerFrame = DbAccess.setConfig('playerFrame', game.animationInfo.defaultPlayerFrame);
+    let unlockedBirdSprites = DbAccess.setConfig('unlockedBirdSprites', [game.animationInfo.defaultPlayerFrame]);
 
     const zeroKills = [];
     zeroKills.length = game.animationInfo.maxBirdFrame + 1;
     zeroKills.fill(0);
-    DbAccess.setConfig('kills', zeroKills);
+    let kills = DbAccess.setConfig('kills', zeroKills);
 
     const zeroMedals = [];
     zeroMedals.length = game.integers.medals.max + 1; //zero indexed=+1
     zeroMedals.fill(0);
-    DbAccess.setConfig('medals', zeroMedals);
+    let medals = DbAccess.setConfig('medals', zeroMedals);
 
-    DbAccess.setConfig('config', game.integers.defaultSettings);
+    let config = DbAccess.setConfig('settings', game.integers.defaultSettings);
     game.sound.volume = Number(!game.integers.defaultSettings.muted);
+
+    await resetGame;
+
+    await maxScore;
+    await maxLevel;
+    await playerFrame;
+    await unlockedBirdSprites;
+    await kills;
+    await medals;
+    await config;
+
+    return null;
   }
 
   static getLockedBirds(game) {

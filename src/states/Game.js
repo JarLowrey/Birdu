@@ -259,24 +259,24 @@ export default class Game extends Phaser.State {
 
   saveLevel() {
     //save general variables
-    DataAccess.setConfig('score', this.score + this._scoreBuffer);
+    DataAccess.setCached('score', this.score + this._scoreBuffer);
     this._scoreBuffer = 0;
-    DataAccess.setConfig('level', this.level);
-    DataAccess.setConfig('comboCount', this.comboCount);
+    DataAccess.setCached('level', this.level);
+    DataAccess.setCached('comboCount', this.comboCount);
 
     //save all sprite values
     const allSprites = this.game.spritePools.serialize();
-    DataAccess.setConfig('sprites', allSprites);
-    DataAccess.setConfig('player', this.game.player.serialize());
+    DataAccess.setCached('sprites', allSprites);
+    DataAccess.setCached('player', this.game.player.serialize());
   }
 
   loadLevel() {
-    const playerInfo = DataAccess.getConfig('player');
+    const playerInfo = DataAccess.getCached('player');
     if (playerInfo) {
       this.game.player.deserialize(playerInfo);
-      this.score = DataAccess.getConfig('score');
-      this.level = DataAccess.getConfig('level');
-      this.comboCount = DataAccess.getConfig('comboCount');
+      this.score = DataAccess.getCached('score');
+      this.level = DataAccess.getCached('level');
+      this.comboCount = DataAccess.getCached('comboCount');
     } else {
       this.score = 0;
       this.level = 0;
@@ -285,7 +285,7 @@ export default class Game extends Phaser.State {
 
     this._scoreBuffer = 0;
 
-    const allSprites = DataAccess.getConfig('sprites');
+    const allSprites = DataAccess.getCached('sprites');
     this.game.spritePools.deserialize(allSprites);
   }
 

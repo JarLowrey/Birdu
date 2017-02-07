@@ -6,6 +6,7 @@
 import Bird from '../objects/Sprites/Bird';
 
 import DataAccess from '../objects/Helpers/DataAccess';
+import DbAccess from '../objects/Helpers/DbAccess';
 import FactoryUi from '../objects/Helpers/FactoryUi';
 
 export default class Gameover extends Phaser.State {
@@ -18,12 +19,18 @@ export default class Gameover extends Phaser.State {
     this.titleText = this.add.text(0, 0, 'Game Over!', this.game.fonts.title);
     this.titleText.anchor.setTo(0.5, 0.5);
 
-    this.info = this.displayGameoverInfo();
+    const gameScore = DataAccess.getCached('score');
+    const medalLevel = FactoryUi.medalLevel(this.game, gameScore);
+    let unlockedSprites = this.newlyUnlockedSprites();
+
+    this.updateStats(unlockedSprites, medalLevel);
+
+    this.info = this.displayGameoverInfo(medalLevel);
     this.tweenScores();
 
     this.positionDisplayObjects();
     this.unlockedBirds = this.add.group();
-    this.displayNewlyUnlockedSprites();
+    this.displayNewlyUnlockedSprites(unlockedSprites);
 
     DataAccess.resetGame();
   }
@@ -41,7 +48,6 @@ export default class Gameover extends Phaser.State {
     this.stateBtns.top = this.info.bottom;
   }
 
-
   sizeDisplayObjects() {
     this.info.height = Math.min(this.game.height * 0.6, this.info.height);
     this.info.scale.x = this.info.scale.y;
@@ -53,9 +59,28 @@ export default class Gameover extends Phaser.State {
     this.stateBtns.scale.x = this.stateBtns.scale.y;
   }
 
-  displayNewlyUnlockedSprites() {
-    const newSkins = this.unlockSprites();
+  updateStats(newBirdSprites, newMedalLevel) {
+    //update the localStorage cache and the long-term DB storage with the results of the game
+    const maxScore = DataAccess.setCached('maxScore', Math.max(DataAccess.getCached('score'), DataAccess.getCached('maxScore')));
+    DbAccess.setConfig('maxScore', maxScore);
 
+    const maxLevel = DataAccess.setCached('maxLevel', Math.max(DataAccess.getCached('level'), DataAccess.getCached('maxLevel')));
+    DbAccess.setConfig('maxLevel', maxLevel);
+
+    const kills = DataAccess.getCached('kills');
+    DbAccess.setConfig('kills', kills);
+
+    const prevUnlocks = DataAccess.getCached('unlockedBirdSprites');
+    const allUnlocks = DataAccess.setCached('unlockedBirdSprites', prevUnlocks.concat(newBirdSprites));
+    DbAccess.setConfig('unlockedBirdSprites', allUnlocks);
+
+    var medalsCount = DataAccess.getCached('medals');
+    medalsCount[newMedalLevel]++;
+    DataAccess.setCached('medals', medalsCount);
+    DbAccess.setConfig('medals', medalsCount);
+  }
+
+  displayNewlyUnlockedSprites(newSkins) {
     if (newSkins.length == 0) return;
 
     //display all the new sprites!
@@ -119,18 +144,18 @@ export default class Gameover extends Phaser.State {
     }, this);
   }
 
-  unlockSprites() {
+  newlyUnlockedSprites() {
     var idsToAddToUnlockSprites = [];
     //cache saved vars relating to unlocking new sprites
-    const medals = DataAccess.getConfig('medals');
+    const medals = DataAccess.getCached('medals');
     const numMedals = medals.reduce(function(a, b) { //sum up all the medals
       return a + b;
     }, 0);
-    const kills = DataAccess.getConfig('kills');
-    const numCombos = DataAccess.getConfig('comboCount');
-    const maxScore = DataAccess.getConfig('maxScore');
-    //const level = DataAccess.getConfig('level');
-    const prevUnlocks = DataAccess.getConfig('unlockedBirdSprites');
+    const kills = DataAccess.getCached('kills');
+    const numCombos = DataAccess.getCached('comboCount');
+    const maxScore = DataAccess.getCached('maxScore');
+    //const level = DataAccess.getCached('level');
+    const prevUnlocks = DataAccess.getCached('unlockedBirdSprites');
 
     //check for any newly unlocked Sprites
     for (var i = 0; i < kills.length; i++) {
@@ -148,21 +173,18 @@ export default class Gameover extends Phaser.State {
       }
     }
 
-    //add newly unlocked sprites to saved unlocks
-    DataAccess.setConfig('unlockedBirdSprites', prevUnlocks.concat(idsToAddToUnlockSprites));
-
     return idsToAddToUnlockSprites;
   }
 
-  displayGameoverInfo() {
+  displayGameoverInfo(newMedalLevel) {
     var info = new Phaser.Group(this.game);
 
     var background = FactoryUi.getBgGraphic(this.game, this.game.dimen.height.gameoverTextBox * 1.5, this.game.dimen.height.gameoverTextBox);
 
-    const gameScore = DataAccess.getConfig('score');
-    const level = DataAccess.getConfig('level');
-    const maxScore = DataAccess.setConfig('maxScore', Math.max(gameScore, DataAccess.getConfig('maxScore')));
-    const maxLevel = DataAccess.setConfig('maxLevel', Math.max(level, DataAccess.getConfig('maxLevel')));
+    const gameScore = DataAccess.getCached('score');
+    const level = DataAccess.getCached('level');
+    const maxScore = DataAccess.getCached('maxScore');
+    const maxLevel = DataAccess.getCached('maxLevel');
 
     this.score = this.add.text(0, 0, Number(gameScore).toLocaleString(), this.game.fonts.text);
     this.score.padding.setTo(this.game.fonts.text.padding.x, this.game.fonts.text.padding.y);
@@ -202,13 +224,7 @@ export default class Gameover extends Phaser.State {
     medalText.anchor.setTo(0.5, 0.5);
     medalText.left = background.left + background.width / 15;
 
-    //get medal level from score and increment the attained medal
-    const medalLevel = FactoryUi.medalLevel(this.game, gameScore);
-    var medalsCount = DataAccess.getConfig('medals');
-    medalsCount[medalLevel]++;
-    DataAccess.setConfig('medals', medalsCount);
-
-    this.medal = FactoryUi.createMedal(this.game, medalLevel);
+    this.medal = FactoryUi.createMedal(this.game, newMedalLevel);
     this.medal.x = medalText.x;
     this.medal.y = background.y;
     medalText.bottom = this.medal.top;

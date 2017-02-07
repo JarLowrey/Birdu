@@ -66,9 +66,9 @@ export default class Enemy extends Bird {
     super.fancyKill();
 
     //increment the number of kills on this type of bird/animal
-    const kills = DataAccess.getConfig('kills');
+    const kills = DataAccess.getCached('kills');
     kills[this.frameId]++;
-    DataAccess.setConfig('kills', kills);
+    DataAccess.setCached('kills', kills);
   }
 
   setSpriteSize() {
@@ -97,7 +97,7 @@ export default class Enemy extends Bird {
     var randomEnemyFrame;
     do {
       randomEnemyFrame = Phaser.Math.between(0, this.game.animationInfo.maxBirdFrame);
-    } while (randomEnemyFrame == DataAccess.getConfig('playerFrame'));
+    } while (randomEnemyFrame == DataAccess.getCached('playerFrame'));
     this.frameId = randomEnemyFrame;
 
     this.animations.play(Bird.birdFrameName(this.frameId));

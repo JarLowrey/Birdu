@@ -3,6 +3,7 @@
  *
  * Interact with long term storage
  */
+import DbAccess from '../Helpers/DbAccess';
 
 export default class DataAccess {
 
@@ -13,7 +14,7 @@ export default class DataAccess {
     return appName + '_' + devName + '_' + itemName;
   }
 
-  static getConfig(name) {
+  static getCached(name) {
     try {
       return JSON.parse(localStorage[DataAccess._getStoredItemName(name)]); //TODO localForage
     } catch (err) {
@@ -21,7 +22,7 @@ export default class DataAccess {
     }
   }
 
-  static setConfig(name, value) {
+  static setCached(name, value) {
     localStorage[DataAccess._getStoredItemName(name)] = JSON.stringify(value); //TODO localForage
 
     return value;
@@ -33,43 +34,20 @@ export default class DataAccess {
       allBirdIds.add(i);
     }
 
-    var unlockedBirds = new Set(DataAccess.getConfig('unlockedBirdSprites'));
+    var unlockedBirds = new Set(DataAccess.getCached('unlockedBirdSprites'));
     var lockedBirds = [...allBirdIds].filter(x => !unlockedBirds.has(x)); //find all bird ids that are not in the unlocked set but ARE in the allBird set
 
     return lockedBirds;
   }
 
   static resetGame() {
-    DataAccess.setConfig('score', 0);
-    DataAccess.setConfig('level', 0);
-    DataAccess.setConfig('sprites', []);
-    DataAccess.setConfig('comboCount', 0);
-  }
+    DataAccess.setCached('score', 0);
+    DataAccess.setCached('level', 0);
+    DataAccess.setCached('sprites', []);
+    DataAccess.setCached('comboCount', 0);
+    DataAccess.setCached('player', null);
 
-  static initializeSave(game) {
-    let initGame = DataAccess.getConfig('score') === undefined || DataAccess.getConfig('level') === undefined || DataAccess.getConfig('sprites') === undefined || DataAccess.getConfig('comboCount') === undefined;
-    if (initGame) {
-      DataAccess.resetGame();
-    }
-
-    DataAccess.setConfig('maxScore', DataAccess.getConfig('maxScore') || 0);
-    DataAccess.setConfig('maxLevel', DataAccess.getConfig('maxLevel') || 0);
-
-    DataAccess.setConfig('playerFrame', DataAccess.getConfig('playerFrame') || game.animationInfo.defaultPlayerFrame);
-    DataAccess.setConfig('unlockedBirdSprites', DataAccess.getConfig('unlockedBirdSprites') || [game.animationInfo.defaultPlayerFrame]);
-
-    const zeroKills = [];
-    zeroKills.length = game.animationInfo.maxBirdFrame + 1;
-    zeroKills.fill(0);
-    DataAccess.setConfig('kills', DataAccess.getConfig('kills') || zeroKills);
-
-    const zeroMedals = [];
-    zeroMedals.length = game.integers.medals.max + 1; //zero indexed=+1
-    zeroMedals.fill(0);
-    DataAccess.setConfig('medals', DataAccess.getConfig('medals') || zeroMedals);
-
-    const settings = DataAccess.setConfig('settings', DataAccess.getConfig('settings') || game.integers.defaultSettings);
-    game.sound.volume = Number(!settings.muted);
+    DbAccess.resetGame();
   }
 
 }

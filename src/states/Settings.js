@@ -4,6 +4,7 @@
 import ToggleSlider from '../objects/ToggleSlider';
 
 import DataAccess from '../objects/Helpers/DataAccess';
+import DbAccess from '../objects/Helpers/DbAccess';
 import FactoryUi from '../objects/Helpers/FactoryUi';
 
 export default class Settings extends Phaser.State {
@@ -39,15 +40,16 @@ export default class Settings extends Phaser.State {
     const toggle = function(dataName) {
       return function() {
         //change settings
-        const settings = DataAccess.getConfig('settings');
+        const settings = DataAccess.getCached('settings');
         settings[dataName] = !settings[dataName];
-        DataAccess.setConfig('settings', settings);
+        DataAccess.setCached('settings', settings);
+        DbAccess.setConfig('settings', settings);
 
         if (dataName == 'muted') this.game.sound.volume = Number(!settings.muted); //apply volume settings
       };
     };
 
-    const settings = DataAccess.getConfig('settings');
+    const settings = DataAccess.getCached('settings');
 
     this.shakeText = this.add.text(0, 0, 'Screen Shake', this.game.fonts.smallText);
     this.shakeText.anchor.setTo(0.5, 0.5);

@@ -103,10 +103,10 @@ export default class Preload extends Phaser.State {
     this.game.colors = this.game.cache.getJSON('colors');
   }
 
-  onLoadComplete() {
+  async onLoadComplete() {
     this.setJson();
-    DataAccess.initializeSave(this.game);
-    DbAccess.open(this.game);
+
+    await DbAccess.loadGame(this.game);
     this.overrideGameFunctionsToCheckForSettings();
 
     this.game.spritesheetKey = 'spritesheet';
@@ -126,16 +126,16 @@ export default class Preload extends Phaser.State {
     //override Default functions to take advantage of the Settings
     //Override Phaser's Camera Shake
     const orginialShake = this.game.camera.shake;
-    this.game.camera.shake = async function() {
-      let useShake = await DbAccess.getConfig('settings').screenShake;
+    this.game.camera.shake = function() {
+      let useShake = DataAccess.getCached('settings').screenShake;
       if (useShake) orginialShake.bind(this)(...arguments);
     };
 
     //----- FOR VIBRATE TO WORK SYSTEM VOLUME CANNOT BE MUTED (tested in Android)! -----
     //override Navigator's Vibrate
     const orginialVibrate = navigator.vibrate;
-    navigator.vibrate = async function() {
-      let useVibration = await DataAccess.getConfig('settings').vibration;
+    navigator.vibrate = function() {
+      let useVibration = DataAccess.getCached('settings').vibration;
       if (useVibration) {
         orginialVibrate.bind(this)(...arguments);
       }

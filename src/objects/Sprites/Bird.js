@@ -78,10 +78,10 @@ export default class Bird extends ExtendedSprite {
   fancyKill() {
     super.kill();
 
-    if (DataAccess.getConfig('playerFrame') != this.frameId) {
-      const numKills = DataAccess.getConfig('kills');
+    if (DataAccess.getCached('playerFrame') != this.frameId) {
+      const numKills = DataAccess.getCached('kills');
       numKills[this.frameId]++;
-      DataAccess.setConfig('kills', numKills); //TODO refactor out this slow storage access for cache access, save only once per game to slow storage
+      DataAccess.setCached('kills', numKills); //TODO refactor out this slow storage access for cache access, save only once per game to slow storage
     }
   }
 

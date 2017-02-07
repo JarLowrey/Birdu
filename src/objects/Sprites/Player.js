@@ -28,7 +28,7 @@ export default class Player extends Bird {
     this.anchor.setTo(0.5, 0.5);
 
     // add animations + tweens specific for this sprite, and and play them if needed
-    this.frameId = DataAccess.getConfig('playerFrame');
+    this.frameId = DataAccess.getCached('playerFrame');
     this.animations.add('idling', Bird.getFlyingFrames(this.frameId, this.game), this.game.animationInfo.flapFPS, true);
     this.animations.play('idling');
 
@@ -114,9 +114,6 @@ export default class Player extends Bird {
     super.fancyKill();
 
     this.game.state.states.Game.levelupCoin.visible = false;
-
-    DataAccess.setConfig('sprites', []);
-    DataAccess.setConfig('player', null);
 
     this.game.spritePools.iterateOverLivingEnemies(function(child) {
       child.gloat();

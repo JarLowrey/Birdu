@@ -4,6 +4,8 @@
 import ExtendedSprite from '../Sprites/ExtendedSprite';
 import PoopSplatter from '../Sprites/PoopSplatter';
 
+import GameData from '../Helpers/GameData';
+
 export default class Poop extends ExtendedSprite {
   static className() {
     return 'Poop';
@@ -41,7 +43,7 @@ export default class Poop extends ExtendedSprite {
 
     poop.kill();
 
-    if (!game.player.invincible) {
+    if (!GameData.player.invincible) {
       game.add.audio('splat').play();
       game.spritePools.spawn(PoopSplatter.className());
     }

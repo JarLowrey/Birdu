@@ -4,7 +4,7 @@
  * Co-opted from https://cordova.apache.org/docs/en/latest/cordova/storage/storage.html
  * With help from https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
  */
-import DataAccess from '../Helpers/DataAccess';
+import GameData from '../Helpers/GameData';
 
 export default class DbAccess {
 
@@ -72,7 +72,7 @@ export default class DbAccess {
     INTERACT WITH THE 'config' OBJECT KEY STORE
   */
 
-  static getConfig(key) {
+  static getKey(key) {
     return new Promise(function(resolve, reject) {
       let store = DbAccess._db.transaction(DbAccess.configObjStoreName).objectStore(DbAccess.configObjStoreName).get(key);
       store.onsuccess = function(event) {
@@ -84,7 +84,7 @@ export default class DbAccess {
     });
   }
 
-  static setConfig(key, value) {
+  static setKey(key, value) {
     // The transaction method takes an array of the names of object stores
     // and indexes that will be in the scope of the transaction (or a single
     // string to access a single object store). The transaction will be
@@ -114,72 +114,68 @@ export default class DbAccess {
     await DbAccess.open(game);
 
     //level stuff
-    let score = DbAccess.getConfig('score');
-    let level = DbAccess.getConfig('level');
-    let sprites = DbAccess.getConfig('sprites');
-    let comboCount = DbAccess.getConfig('comboCount');
+    let score = DbAccess.getKey('score');
+    let level = DbAccess.getKey('level');
+    let sprites = DbAccess.getKey('sprites');
+    let comboCount = DbAccess.getKey('comboCount');
+    let serializedPlayerInfo = DbAccess.getKey('serializedPlayerInfo');
 
     //long term stats
-    let maxScore = DbAccess.getConfig('maxScore');
-    let maxLevel = DbAccess.getConfig('maxLevel');
-    let playerFrame = DbAccess.getConfig('playerFrame');
-    let unlockedBirdSprites = DbAccess.getConfig('unlockedBirdSprites');
-    let kills = DbAccess.getConfig('kills');
-    let medals = DbAccess.getConfig('medals');
-    let config = DbAccess.getConfig('settings');
+    let maxScore = DbAccess.getKey('maxScore');
+    let maxLevel = DbAccess.getKey('maxLevel');
+    let playerFrame = DbAccess.getKey('playerFrame');
+    let unlockedBirdSprites = DbAccess.getKey('unlockedBirdSprites');
+    let kills = DbAccess.getKey('kills');
+    let medals = DbAccess.getKey('medals');
+    let settings = DbAccess.getKey('settings');
 
-    //load long-term storage into localStorage cache
-    DataAccess.setCached('score', await score);
-    DataAccess.setCached('level', await level);
-    DataAccess.setCached('sprites', await sprites);
-    DataAccess.setCached('comboCount', await comboCount);
-    DataAccess.setCached('maxScore', await maxScore);
-    DataAccess.setCached('maxLevel', await maxLevel);
-    DataAccess.setCached('playerFrame', await playerFrame);
-    DataAccess.setCached('unlockedBirdSprites', await unlockedBirdSprites);
-    DataAccess.setCached('kills', await kills);
-    DataAccess.setCached('medals', await medals);
-    DataAccess.setCached('settings', await config);
+    //load long-term storage into cache
+    GameData.score = await score;
+    GameData.level = await level;
+    GameData.sprites = await sprites;
+    GameData.comboCount = await comboCount;
+    GameData.serializedPlayerInfo = await serializedPlayerInfo;
+    GameData.maxScore = await maxScore;
+    GameData.maxLevel = await maxLevel;
+    GameData.playerFrame = await playerFrame;
+    GameData.unlockedBirdSprites = await unlockedBirdSprites;
+    GameData.kills = await kills;
+    GameData.medals = await medals;
+    GameData.settings = await settings;
   }
 
-  static async resetGame() {
-    let score = DbAccess.setConfig('score', 0);
-    let level = DbAccess.setConfig('level', 0);
-    let sprites = DbAccess.setConfig('sprites', []);
-    let comboCount = DbAccess.setConfig('comboCount', 0);
-    let player = DbAccess.setConfig('player', null);
+  static async initDb(game) {
+    const defaults = game.cache.getJSON('preloadJSON').defaults;
+
+    let score = DbAccess.setKey('score', 0);
+    let level = DbAccess.setKey('level', 0);
+    let sprites = DbAccess.setKey('sprites', []);
+    let comboCount = DbAccess.setKey('comboCount', 0);
+    let serializedPlayerInfo = DbAccess.setKey('serializedPlayerInfo', null);
+
+    let maxScore = DbAccess.setKey('maxScore', 0);
+    let maxLevel = DbAccess.setKey('maxLevel', 0);
+    let playerFrame = DbAccess.setKey('playerFrame', defaults.playerFrame);
+    let unlockedBirdSprites = DbAccess.setKey('unlockedBirdSprites', [defaults.playerFrame]);
+
+    const zeroKills = [];
+    zeroKills.length = defaults.maxBirdFrame + 1;
+    zeroKills.fill(0);
+    let kills = DbAccess.setKey('kills', zeroKills);
+
+    const zeroMedals = [];
+    zeroMedals.length = defaults.medals.max + 1; //zero indexed=+1
+    zeroMedals.fill(0);
+    let medals = DbAccess.setKey('medals', zeroMedals);
+
+    let settings = DbAccess.setKey('settings', defaults.settings);
+    game.sound.volume = Number(!defaults.settings.muted);
 
     await score;
     await level;
     await sprites;
     await comboCount;
-    await player;
-
-    return null;
-  }
-
-  static async initDb(game) {
-    let resetGame = DbAccess.resetGame();
-
-    let maxScore = DbAccess.setConfig('maxScore', 0);
-    let maxLevel = DbAccess.setConfig('maxLevel', 0);
-    let playerFrame = DbAccess.setConfig('playerFrame', game.animationInfo.defaultPlayerFrame);
-    let unlockedBirdSprites = DbAccess.setConfig('unlockedBirdSprites', [game.animationInfo.defaultPlayerFrame]);
-
-    const zeroKills = [];
-    zeroKills.length = game.animationInfo.maxBirdFrame + 1;
-    zeroKills.fill(0);
-    let kills = DbAccess.setConfig('kills', zeroKills);
-
-    const zeroMedals = [];
-    zeroMedals.length = game.integers.medals.max + 1; //zero indexed=+1
-    zeroMedals.fill(0);
-    let medals = DbAccess.setConfig('medals', zeroMedals);
-
-    let config = DbAccess.setConfig('settings', game.integers.defaultSettings);
-    game.sound.volume = Number(!game.integers.defaultSettings.muted);
-
-    await resetGame;
+    await serializedPlayerInfo;
 
     await maxScore;
     await maxLevel;
@@ -187,21 +183,11 @@ export default class DbAccess {
     await unlockedBirdSprites;
     await kills;
     await medals;
-    await config;
+    await settings;
+
+    console.log('db initialized');
 
     return null;
-  }
-
-  static getLockedBirds(game) {
-    var allBirdIds = new Set();
-    for (let i = 0; i <= game.animationInfo.maxBirdFrame; i++) {
-      allBirdIds.add(i);
-    }
-
-    var unlockedBirds = new Set(DbAccess.getConfig('unlockedBirdSprites'));
-    var lockedBirds = [...allBirdIds].filter(x => !unlockedBirds.has(x)); //find all bird ids that are not in the unlocked set but ARE in the allBird set
-
-    return lockedBirds;
   }
 
 }

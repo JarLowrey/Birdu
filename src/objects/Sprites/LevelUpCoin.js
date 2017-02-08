@@ -4,6 +4,7 @@
  * flies to the player and applies a levelup upon collision
  */
 import ExtendedSprite from '../Sprites/ExtendedSprite';
+import GameData from '../Helpers/GameData';
 
 export default class LevelUpCoin extends ExtendedSprite {
 
@@ -39,8 +40,8 @@ export default class LevelUpCoin extends ExtendedSprite {
     if (!this.alive) return;
 
     if (this.visible) {
-      this.game.physics.arcade.moveToObject(this, this.game.player, this.speed);
-      this.game.physics.arcade.overlap(this.game.player, this, this.coinReachedPlayer, null, this);
+      this.game.physics.arcade.moveToObject(this, GameData.player, this.speed);
+      this.game.physics.arcade.overlap(GameData.player, this, this.coinReachedPlayer, null, this);
     }
   }
 
@@ -53,7 +54,7 @@ export default class LevelUpCoin extends ExtendedSprite {
     this.game.add.audio('levelup').play();
 
     //update player's size, sprite, speed, etc as necessary
-    this.game.player.setSizeFromWidth(this.game.dimen.width.playerOriginal);
-    this.game.state.states.Game.pieProgress.setText(this.game.state.states.Game.level);
+    GameData.player.setSizeFromWidth(this.game.dimen.width.playerOriginal);
+    this.game.state.states.Game.pieProgress.setText(GameData.level);
   }
 }

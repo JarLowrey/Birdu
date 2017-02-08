@@ -4,6 +4,7 @@
  * Flees from the player
  */
 import Enemy from '../Sprites/Enemy';
+import GameData from '../Helpers/GameData';
 
 export default class ScaredEnemy extends Enemy {
   static className() {
@@ -43,13 +44,13 @@ export default class ScaredEnemy extends Enemy {
     super.update();
     if (this.gloating || !this.alive) return;
 
-    const distToPlayer = Phaser.Point.distance(this, this.game.player);
-    const close = distToPlayer < this.game.player.width;
+    const distToPlayer = Phaser.Point.distance(this, GameData.player);
+    const close = distToPlayer < GameData.player.width;
 
     if (close) {
-      const scared = this.area() < this.game.player.area();//only check scared when close to save CPU
-      if(scared){
-        const escapeRadians = this.game.physics.arcade.angleBetweenCenters(this.game.player, this);
+      const scared = this.area() < GameData.player.area(); //only check scared when close to save CPU
+      if (scared) {
+        const escapeRadians = this.game.physics.arcade.angleBetweenCenters(GameData.player, this);
         const escapeDegrees = Phaser.Math.radToDeg(escapeRadians);
 
         this.setLookingDirection(escapeDegrees);
@@ -80,7 +81,7 @@ export default class ScaredEnemy extends Enemy {
 
   //since these enemies have advantage on direction, give them a handicap on speed
   getSpeed() {
-    return super.getSpeed() * this.game.scaleMultipler(this.game.speeds.scaredEnemy, false);
+    return super.getSpeed() * GameData.scaleMultipler(this.game.speeds.scaredEnemy, false);
   }
 
 

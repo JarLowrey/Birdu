@@ -1,8 +1,5 @@
 {
-  "defaultPlayerFrame":17,
   "derpyId":16,
-
-  "maxBirdFrame":27,
 
   "poopSplatterFrameNames":["splat_1","splat_2","splat_3","splat_4"],
   "maxPoopSplatterFrameNum":4,

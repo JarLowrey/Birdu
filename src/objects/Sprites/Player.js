@@ -5,7 +5,7 @@
  */
 import Bird from '../Sprites/Bird';
 
-import DataAccess from '../Helpers/DataAccess';
+import GameData from '../Helpers/GameData';
 
 export default class Player extends Bird {
   static className() {
@@ -28,7 +28,7 @@ export default class Player extends Bird {
     this.anchor.setTo(0.5, 0.5);
 
     // add animations + tweens specific for this sprite, and and play them if needed
-    this.frameId = DataAccess.getCached('playerFrame');
+    this.frameId = GameData.playerFrame;
     this.animations.add('idling', Bird.getFlyingFrames(this.frameId, this.game), this.game.animationInfo.flapFPS, true);
     this.animations.play('idling');
 
@@ -174,7 +174,6 @@ export default class Player extends Bird {
 
       const slowDownDist = this.width / 2;
       playerSpd = Phaser.Math.linear(0, playerSpd, Math.min(slowDownDist, distToPointer) / slowDownDist);
-
       this.game.physics.arcade.velocityFromAngle(angle, playerSpd, this.body.velocity);
     }
     //NOT MOVING
@@ -194,11 +193,11 @@ export default class Player extends Bird {
   }
 
   getSpeed() {
-    return this.game.scaleMultipler(this.game.speeds.player, false);
+    return GameData.scaleMultipler(this.game.speeds.player, false);
   }
 
   levelupArea() {
-    const multiplier = this.game.scaleMultipler(this.game.integers.area.levelup, false);
+    const multiplier = GameData.scaleMultipler(this.game.integers.area.levelup, false);
     return this.game.originalPlayerArea * multiplier;
   }
 }

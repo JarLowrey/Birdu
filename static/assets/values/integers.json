@@ -1,13 +1,7 @@
 {
   "screenShakeIntensity":0.005,
   "fartVolume":0.35,
-
-  "medals":{
-    "min":0,
-    "max":7,
-    "scoreForLevelUp":1000
-  },
-
+  
   "numColumnsInUnlockablesGrid":7,
 
   "bodyShrink":0.25,
@@ -89,11 +83,5 @@
         "max":6.5,
         "maxLevel":10
       }
-  },
-
-  "defaultSettings":{
-    "vibration": true,
-    "screenShake": true,
-    "muted": false
   }
 }

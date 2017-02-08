@@ -47,32 +47,6 @@ export default class Boot extends Phaser.State {
     // using the asset pack data.
     this.load.pack('boot', null, assets);
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
-
-    //Define global variables:
-
-    // Returns a random number between min (inclusive) and max (exclusive)
-    this.game.floatBetween = function(min, max) {
-      return Math.random() * (max - min) + min;
-    };
-    this.game.scaleMultipler = function(multiplierData, randomize = true) {
-      const level = this.game.state.states.Game.level;
-
-      const linearScaled = Phaser.Math.linear(multiplierData.min, multiplierData.max, level / multiplierData.maxLevel);
-      var delta = Math.min(linearScaled, multiplierData.max) - multiplierData.min;
-      if (randomize) {
-        delta *= Math.random();
-      }
-      var returnValue = delta + multiplierData.min;
-
-      if (typeof multiplierData.round !== 'undefined') {
-        returnValue = this.game.roundToNearest(returnValue, multiplierData.round.nearest);
-      }
-
-      return returnValue;
-    }.bind(this);
-    this.game.roundToNearest = function(input, nearest) {
-      return Math.round(input / nearest) * nearest;
-    };
   }
 
   onLoadComplete() {

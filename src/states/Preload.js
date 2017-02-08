@@ -9,12 +9,13 @@
 
 import assets from '../assets';
 
-import DataAccess from '../objects/Helpers/DataAccess';
+import GameData from '../objects/Helpers/GameData';
 import DbAccess from '../objects/Helpers/DbAccess';
 
 export default class Preload extends Phaser.State {
 
   preload() {
+    this.copyDataToCache();
     this.showSplashScreen();
 
     this.game.load.onFileComplete.add(this.fileComplete, this);
@@ -80,10 +81,19 @@ export default class Preload extends Phaser.State {
     this.game.time.events.add(preloadInfo.minSplashScreenShowTime, this.finishedSplashScreen, this);
   }
 
+  async copyDataToCache() {
+    this.dataCopiedToCache = false;
+
+    await DbAccess.loadGame(this.game);
+
+    this.dataCopiedToCache = true;
+    this.checkPreloadFinishedAndTryStartNextState();
+  }
+
   finishedSplashScreen() {
     this.splashScreenOver = true;
 
-    this.startNextState();
+    this.checkPreloadFinishedAndTryStartNextState();
   }
 
   setJson() {
@@ -101,22 +111,26 @@ export default class Preload extends Phaser.State {
     this.game.integers = this.game.cache.getJSON('integers');
     this.game.strings = this.game.cache.getJSON('strings');
     this.game.colors = this.game.cache.getJSON('colors');
+
+    //these values needed in preloadJSON to init the database, copy over to normal usages so it is more readable when accessing later
+    this.game.animationInfo.maxBirdFrame = this.game.cache.getJSON('preloadJSON').defaults.maxBirdFrame;
+    this.game.integers.medals = this.game.cache.getJSON('preloadJSON').defaults.medals;
+
   }
 
-  async onLoadComplete() {
+  onLoadComplete() {
     this.setJson();
 
-    await DbAccess.loadGame(this.game);
     this.overrideGameFunctionsToCheckForSettings();
 
     this.game.spritesheetKey = 'spritesheet';
     this.loadingText.setText('100%');
 
-    this.startNextState();
+    this.checkPreloadFinishedAndTryStartNextState();
   }
 
-  startNextState() {
-    if (this.splashScreenOver && this.load.hasLoaded) { //splash screen has been shown for a minimum amount of time, and loading assets is finished
+  checkPreloadFinishedAndTryStartNextState() {
+    if (this.dataCopiedToCache && this.splashScreenOver && this.load.hasLoaded) { //splash screen has been shown for a minimum amount of time, and loading assets is finished
       this.state.start('Menu');
     }
   }
@@ -127,7 +141,7 @@ export default class Preload extends Phaser.State {
     //Override Phaser's Camera Shake
     const orginialShake = this.game.camera.shake;
     this.game.camera.shake = function() {
-      let useShake = DataAccess.getCached('settings').screenShake;
+      let useShake = GameData.settings.screenShake;
       if (useShake) orginialShake.bind(this)(...arguments);
     };
 
@@ -135,7 +149,7 @@ export default class Preload extends Phaser.State {
     //override Navigator's Vibrate
     const orginialVibrate = navigator.vibrate;
     navigator.vibrate = function() {
-      let useVibration = DataAccess.getCached('settings').vibration;
+      let useVibration = GameData.settings.vibration;
       if (useVibration) {
         orginialVibrate.bind(this)(...arguments);
       }

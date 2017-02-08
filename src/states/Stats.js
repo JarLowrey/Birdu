@@ -8,8 +8,7 @@
 import Bird from '../objects/Sprites/Bird';
 import Alert from '../objects/Alert';
 
-import DataAccess from '../objects/Helpers/DataAccess';
-import DbAccess from '../objects/Helpers/DbAccess';
+import GameData from '../objects/Helpers/GameData';
 import FactoryUi from '../objects/Helpers/FactoryUi';
 
 export default class Stats extends Phaser.State {
@@ -20,8 +19,8 @@ export default class Stats extends Phaser.State {
     this.background = FactoryUi.displayBg(this.game);
     this.stateBtns = FactoryUi.createStateChangeButtons(this.game);
 
-    const score = this.game.nFormatter(DataAccess.getCached('maxScore'));
-    const level = this.game.nFormatter(DataAccess.getCached('maxLevel'));
+    const score = this.game.nFormatter(GameData.maxScore);
+    const level = this.game.nFormatter(GameData.maxLevel);
     //setup purchases and purchase buttons
     if (this.game.device.cordova) {
       this.initStore();
@@ -30,7 +29,7 @@ export default class Stats extends Phaser.State {
         store.order(this.allSkinsProductId);
       }, this, 'buyPressed', 'buy', 'buyPressed', 'buy');
 
-      if (this.allSkinsProduct.canPurchase || DataAccess.getLockedBirds(this.game).length == 0) {
+      if (this.allSkinsProduct.canPurchase || GameData.getLockedBirds(this.game).length == 0) {
         this.buyBtn.visible = false;
       }
     }
@@ -79,7 +78,7 @@ export default class Stats extends Phaser.State {
   applyUnlockAllSkinsIAP() {
     //check this purchase is needed. There is a bug in the purchase plugin used, products will keep calling the 'approved' function even if the product is 'finished'
     //https://github.com/j3k0/cordova-plugin-purchase/issues/483
-    var lockedBirds = DataAccess.getLockedBirds(this.game);
+    var lockedBirds = GameData.getLockedBirds(this.game);
     if (lockedBirds.length == 0) return;
 
     const unlockAlertText = 'All skins unlocked!!\n\n' + this.game.strings.devThankYou;
@@ -87,9 +86,8 @@ export default class Stats extends Phaser.State {
     this.buyBtn.visible = false;
 
     //unlock sprites
-    var allBirds = DataAccess.getCached('unlockedBirdSprites').concat(lockedBirds);
-    DataAccess.setCached('unlockedBirdSprites', allBirds);
-    DbAccess.setConfig('unlockedBirdSprites', allBirds);
+    var allBirds = GameData.unlockedBirdSprites.concat(lockedBirds);
+    GameData.unlockedBirdSprites = allBirds;
 
     //display new unlocks
     this.showUnlockedBirds();
@@ -150,7 +148,7 @@ export default class Stats extends Phaser.State {
   }
 
   placeBirdsInGrid() {
-    const killData = DataAccess.getCached('kills');
+    const killData = GameData.kills;
     const width = this.game.dimen.width.gridUnlockableSprites;
 
     var birdGrid = new Phaser.Group(this.game);
@@ -205,7 +203,7 @@ export default class Stats extends Phaser.State {
   createMedals() {
     var medals = new Phaser.Group(this.game);
     var prevMedal = null;
-    const medalCounts = DataAccess.getCached('medals');
+    const medalCounts = GameData.medals;
 
     for (var i = 0; i < medalCounts.length; i++) {
       var medal = FactoryUi.createMedal(this.game, i);
@@ -237,10 +235,9 @@ export default class Stats extends Phaser.State {
 
       const unlockIntructions = this.getUnlockableInstructionString(birdId);
 
-      if (DataAccess.getCached('unlockedBirdSprites').includes(birdId)) { //already unlocked
+      if (GameData.unlockedBirdSprites.includes(birdId)) { //already unlocked
         this.prevAlert = new Alert(this.game, unlockIntructions + '\n' + this.game.strings.skinSet);
-        DataAccess.setCached('playerFrame', birdId);
-        DbAccess.setConfig('playerFrame', birdId);
+        GameData.playerFrame = birdId;
       } else { //locked (not unlocked yet)
         this.prevAlert = new Alert(this.game, unlockIntructions);
       }
@@ -275,9 +272,7 @@ export default class Stats extends Phaser.State {
   }
 
   showUnlockedBirds() {
-    const unlockedBirds = DataAccess.getCached('unlockedBirdSprites');
-
-    unlockedBirds.forEach(function(birdId) {
+    GameData.unlockedBirdSprites.forEach(function(birdId) {
       const bird = this.birdGrid.getChildAt(this.getRow(birdId)).getChildAt(this.getCol(birdId));
       bird.tint = 0xffffff;
       bird.alpha = 1;

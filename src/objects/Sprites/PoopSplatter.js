@@ -2,6 +2,7 @@
  * Poop
  */
 import ExtendedSprite from '../Sprites/ExtendedSprite';
+import GameData from '../Helpers/GameData';
 
 export default class PoopSplatter extends ExtendedSprite {
   static className() {
@@ -31,10 +32,10 @@ export default class PoopSplatter extends ExtendedSprite {
 
     this.angle = Math.random() * 180;
     this.tint = this.game.colors.poop[Phaser.Math.between(0, this.game.colors.poop.length - 1)];
-    this.alpha = this.game.floatBetween(this.game.integers.splatter.alpha.min, this.game.integers.splatter.alpha.max);
+    this.alpha = GameData.floatBetween(this.game.integers.splatter.alpha.min, this.game.integers.splatter.alpha.max);
 
     //set size and position
-    const splatWidth = this.game.width * this.game.floatBetween(this.game.dimen.width.poopSplatter.min, this.game.dimen.width.poopSplatter.max);
+    const splatWidth = this.game.width * GameData.floatBetween(this.game.dimen.width.poopSplatter.min, this.game.dimen.width.poopSplatter.max);
     this.setSizeFromWidth(splatWidth);
     this.x = Math.random() * (this.game.world.width - Math.abs(this.width)) + Math.abs(this.width) / 2;
     this.y = Math.random() * (this.game.world.height - Math.abs(this.height)) + Math.abs(this.height) / 2;

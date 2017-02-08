@@ -3,6 +3,7 @@
  *
  * Flies up to the scoreLabel, increments game score, and disappears
  */
+import GameData from '../Helpers/GameData';
 
 export default class MovingScore extends Phaser.Text {
   static className() {
@@ -20,8 +21,8 @@ export default class MovingScore extends Phaser.Text {
   reset() {
     super.reset();
 
-    this.x = this.game.player.x;
-    this.y = this.game.player.y;
+    this.x = GameData.player.x;
+    this.y = GameData.player.y;
   }
 
   startMovement(score, scoreLabel,

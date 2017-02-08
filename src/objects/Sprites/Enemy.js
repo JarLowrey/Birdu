@@ -5,7 +5,7 @@
  */
 import Bird from '../Sprites/Bird';
 import Poop from '../Sprites/Poop';
-import DataAccess from '../Helpers/DataAccess';
+import GameData from '../Helpers/GameData';
 
 export default class Enemy extends Bird {
   static className() {
@@ -32,7 +32,7 @@ export default class Enemy extends Bird {
   poop(initializingTimer = false) {
     if (this.alive && !initializingTimer) this.game.spritePools.spawn(Poop.className(), this.x, this.y);
 
-    const timeToSpawn = this.game.floatBetween(this.game.durations.poopSpawn.min, this.game.durations.poopSpawn.max);
+    const timeToSpawn = GameData.floatBetween(this.game.durations.poopSpawn.min, this.game.durations.poopSpawn.max);
     this.game.time.events.add(timeToSpawn, this.poop, this);
   }
 
@@ -65,19 +65,16 @@ export default class Enemy extends Bird {
   fancyKill() {
     super.fancyKill();
 
-    //increment the number of kills on this type of bird/animal
-    const kills = DataAccess.getCached('kills');
-    kills[this.frameId]++;
-    DataAccess.setCached('kills', kills);
+    GameData.kills[this.frameId]++;
   }
 
   setSpriteSize() {
-    const max = this.game.player.levelupArea() * 0.65;
+    const max = GameData.player.levelupArea() * 0.65;
     const min = this.game.originalPlayerArea / 4;
-    const range = this.game.floatBetween(min, max);
-    //var multiplier = this.game.scaleMultipler(this.game.integers.area.enemy);
+    const range = GameData.floatBetween(min, max);
+    //var multiplier = GameData.scaleMultipler(this.game.integers.area.enemy);
     //if (multiplier == 0) multiplier = -this.game.integers.area.enemy.round.nearest;
-    //const newArea = this.game.player.area() * (multiplier + 1);
+    //const newArea = GameData.player.area() * (multiplier + 1);
     const newArea = Math.max(1000, Phaser.Math.roundTo(range, 3)); //do not let newArea = 0, shit will break
 
     // Find the new width from the given newArea
@@ -88,7 +85,7 @@ export default class Enemy extends Bird {
   }
 
   getSpeed() {
-    if (!this.speed) this.speed = this.game.player.getSpeed() * this.game.scaleMultipler(this.game.speeds.enemyMultiplier);
+    if (!this.speed) this.speed = GameData.player.getSpeed() * GameData.scaleMultipler(this.game.speeds.enemyMultiplier);
     return this.speed;
   }
 
@@ -97,7 +94,7 @@ export default class Enemy extends Bird {
     var randomEnemyFrame;
     do {
       randomEnemyFrame = Phaser.Math.between(0, this.game.animationInfo.maxBirdFrame);
-    } while (randomEnemyFrame == DataAccess.getCached('playerFrame'));
+    } while (randomEnemyFrame == GameData.playerFrame);
     this.frameId = randomEnemyFrame;
 
     this.animations.play(Bird.birdFrameName(this.frameId));

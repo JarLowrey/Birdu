@@ -12,6 +12,8 @@ import PoopSplatter from '../objects/Sprites/PoopSplatter';
 import Poop from '../objects/Sprites/Poop';
 import MovingScore from '../objects/Sprites/MovingScore';
 
+import GameData from '../objects/Helpers/GameData';
+
 export default class Pools {
 
   constructor(game) {
@@ -19,13 +21,34 @@ export default class Pools {
 
     //initialize pools
     this.pools = {};
-    this.pools[Enemy.className()] =         {'class':Enemy,       'count':25};
-    this.pools[ScaredEnemy.className()] =   {'class':ScaredEnemy, 'count':20};
-    this.pools[Poop.className()] =          {'class':Poop,        'count':35};
-    this.pools[PoopSplatter.className()] =  {'class':PoopSplatter,'count':7};
-    this.pools[Star.className()] =          {'class':Star,        'count':4};
-    this.pools[Cloud.className()] =         {'class':Cloud,       'count':15};
-    this.pools[MovingScore.className()] =   {'class':MovingScore, 'count':12};
+    this.pools[Enemy.className()] = {
+      'class': Enemy,
+      'count': 25
+    };
+    this.pools[ScaredEnemy.className()] = {
+      'class': ScaredEnemy,
+      'count': 20
+    };
+    this.pools[Poop.className()] = {
+      'class': Poop,
+      'count': 35
+    };
+    this.pools[PoopSplatter.className()] = {
+      'class': PoopSplatter,
+      'count': 7
+    };
+    this.pools[Star.className()] = {
+      'class': Star,
+      'count': 4
+    };
+    this.pools[Cloud.className()] = {
+      'class': Cloud,
+      'count': 15
+    };
+    this.pools[MovingScore.className()] = {
+      'class': MovingScore,
+      'count': 12
+    };
 
     //create the groups and reassign this.pools
     for (var className in this.pools) {
@@ -74,8 +97,9 @@ export default class Pools {
 
     return sprite;
   }
-  spawnEnemy(level) {
-    const probSpawnScared = Math.min(this.game.integers.spawnProbability.scared.max, level / 100 + this.game.integers.spawnProbability.scared.min);
+
+  spawnEnemy() {
+    const probSpawnScared = Math.min(this.game.integers.spawnProbability.scared.max, GameData.level / 100 + this.game.integers.spawnProbability.scared.min);
 
     const className = (Math.random() < probSpawnScared) ? ScaredEnemy.className() : Enemy.className();
 
@@ -99,9 +123,9 @@ export default class Pools {
     const scaredEnemies = this.getPool(ScaredEnemy.className());
 
     //collide enemies with player
-    this.game.physics.arcade.collide(this.game.player, enemies,
+    this.game.physics.arcade.collide(GameData.player, enemies,
       this.game.state.states.Game.birdCollide, null, this.game.state.states.Game);
-    this.game.physics.arcade.collide(this.game.player, scaredEnemies,
+    this.game.physics.arcade.collide(GameData.player, scaredEnemies,
       this.game.state.states.Game.birdCollide, null, this.game.state.states.Game);
 
     //collide enemies with each other - removed as it makes it possible for enemies to change area as you chase (they run into others), resulting in frustrating deaths
@@ -110,9 +134,9 @@ export default class Pools {
     this.game.physics.arcade.collide(enemies, scaredEnemies, Bird.birdsCollide, null, this);
 
     //overlap powerups/powerdowns
-    this.game.physics.arcade.overlap(this.game.player, this.getPool(Star.className()), Star.touchedPlayer, null, this);
-    this.game.physics.arcade.overlap(this.game.player, this.getPool(Cloud.className()), Cloud.touchedPlayer, null, this);
-    this.game.physics.arcade.overlap(this.game.player, this.getPool(Poop.className()), Poop.touchedPlayer, null, this);
+    this.game.physics.arcade.overlap(GameData.player, this.getPool(Star.className()), Star.touchedPlayer, null, this);
+    this.game.physics.arcade.overlap(GameData.player, this.getPool(Cloud.className()), Cloud.touchedPlayer, null, this);
+    this.game.physics.arcade.overlap(GameData.player, this.getPool(Poop.className()), Poop.touchedPlayer, null, this);
   }
 
   isEnemy(someClass) {

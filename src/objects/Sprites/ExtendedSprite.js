@@ -61,7 +61,7 @@ export default class ExtendedSprite extends Phaser.Sprite {
 
 
   serialize() {
-    const serializedInfo = {
+    let serializedInfo = {
       width: this.width,
 
       alpha: this.alpha,
@@ -70,16 +70,18 @@ export default class ExtendedSprite extends Phaser.Sprite {
       x: this.x,
       y: this.y,
 
-      body: {
+      className: this.className(),
+      frame: this.frameName
+    };
+
+    if (this.body) {
+      serializedInfo.body = {
         velocity: {
           x: this.body.velocity.x,
           y: this.body.velocity.y
         }
-      },
-
-      className: this.className(),
-      frame: this.frameName
-    };
+      }
+    }
 
     return serializedInfo;
   }

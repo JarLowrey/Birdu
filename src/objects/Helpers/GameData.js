@@ -7,111 +7,153 @@ import DbAccess from '../Helpers/DbAccess';
 
 export default class GameData {
 
+  constructor() {
+    //variables initialized when loading when the DB asynchronousl in DbAccess.js
+  }
+
+  static _init() {
+    if (!GameData._inst) {
+      GameData._inst = new GameData();
+    }
+  }
+  static clear() {
+    GameData._inst = null;
+  }
+
   /*
     Properties
   */
   static get score() {
-    return GameData._score;
+    GameData._init();
+    return GameData._inst._score;
   }
   static set score(val) {
-    GameData._score = val;
+    GameData._init();
+    GameData._inst._score = val;
   }
 
   static get level() {
-    return GameData._level;
+    GameData._init();
+    return GameData._inst._level;
   }
   static set level(val) {
-    GameData._level = val;
+    GameData._init();
+    GameData._inst._level = val;
   }
 
   static get player() {
-    return GameData._player;
+    GameData._init();
+    return GameData._inst._player;
   }
   static set player(val) {
-    GameData._player = val;
+    GameData._init();
+    GameData._inst._player = val;
   }
 
   static get sprites() {
-    return GameData._sprites;
+    GameData._init();
+    return GameData._inst._sprites;
   }
   static set sprites(val) {
-    GameData._sprites = val;
+    GameData._init();
+    GameData._inst._sprites = val;
     DbAccess.setKey('sprites', val);
   }
 
   static get comboCount() {
-    return GameData._comboCount;
+    GameData._init();
+    return GameData._inst._comboCount;
   }
   static set comboCount(val) {
-    GameData._comboCount = val;
+    GameData._init();
+    GameData._inst._comboCount = val;
   }
 
   static get serializedPlayerInfo() {
-    return GameData._serializedPlayerInfo;
+    GameData._init();
+    return GameData._inst._serializedPlayerInfo;
   }
   static set serializedPlayerInfo(val) {
-    GameData._serializedPlayerInfo = val;
+    GameData._init();
+    GameData._inst._serializedPlayerInfo = val;
     DbAccess.setKey('serializedPlayerInfo', val);
   }
 
   static get maxScore() {
-    return GameData._maxScore;
+    GameData._init();
+    return GameData._inst._maxScore;
   }
   static set maxScore(val) {
-    GameData._maxScore = val;
+    GameData._init();
+    GameData._inst._maxScore = val;
     DbAccess.setKey('maxScore', val);
   }
 
   static get maxLevel() {
-    return GameData._maxLevel;
+    GameData._init();
+    return GameData._inst._maxLevel;
   }
   static set maxLevel(val) {
-    GameData._maxLevel = val;
+    GameData._init();
+    GameData._inst._maxLevel = val;
     DbAccess.setKey('maxLevel', val);
   }
 
   static get unlockedBirdSprites() {
-    return GameData._unlockedBirdSprites;
+    GameData._init();
+    return GameData._inst._unlockedBirdSprites;
   }
   static set unlockedBirdSprites(val) {
-    GameData._unlockedBirdSprites = val;
+    GameData._init();
+    GameData._inst._unlockedBirdSprites = val;
     DbAccess.setKey('unlockedBirdSprites', val);
   }
 
   static get kills() {
-    return GameData._kills;
+    GameData._init();
+    return GameData._inst._kills;
   }
   static set kills(val) {
-    GameData._kills = val;
+    GameData._init();
+    GameData._inst._kills = val;
     DbAccess.setKey('kills', val);
   }
 
   static get medals() {
-    return GameData._medals;
+    GameData._init();
+    return GameData._inst._medals;
   }
   static set medals(val) {
-    GameData._medals = val;
+    GameData._init();
+    GameData._inst._medals = val;
     DbAccess.setKey('medals', val);
   }
 
   static get settings() {
-    return GameData._settings;
+    GameData._init();
+    return GameData._inst._settings;
   }
   static set settings(val) {
-    GameData._settings = val;
+    GameData._init();
+    GameData._inst._settings = val;
     DbAccess.setKey('settings', val);
   }
 
   static get playerFrame() {
-    return GameData._playerFrame;
+    GameData._init();
+    return GameData._inst._playerFrame;
   }
   static set playerFrame(val) {
-    GameData._playerFrame = val;
+    GameData._init();
+    GameData._inst._playerFrame = val;
     DbAccess.setKey('playerFrame', val);
   }
 
+
+
+
   /*
-    Data Helpers
+    Data Helpers/Convenience methods that use the static getter/setter wrappers
   */
   static getLockedBirds(game) {
     var allBirdIds = new Set();

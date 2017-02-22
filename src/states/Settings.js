@@ -3,7 +3,6 @@
  */
 import ToggleSlider from '../objects/ToggleSlider';
 
-import GameData from '../objects/Helpers/GameData';
 import FactoryUi from '../objects/Helpers/FactoryUi';
 
 export default class Settings extends Phaser.State {
@@ -39,29 +38,29 @@ export default class Settings extends Phaser.State {
     const toggle = function(dataName) {
       return function() {
         //change settings
-        GameData.settings[dataName] = !GameData.settings[dataName];
+        this.game.data.settings[dataName] = !this.game.data.settings[dataName];
 
-        if (dataName == 'muted') this.game.sound.volume = Number(!GameData.settings.muted); //apply volume settings
+        if (dataName == 'muted') this.game.sound.volume = Number(!this.game.data.settings.muted); //apply volume settings
       };
     };
 
     this.shakeText = this.add.text(0, 0, 'Screen Shake', this.game.fonts.smallText);
     this.shakeText.anchor.setTo(0.5, 0.5);
-    this.shakeSlider = new ToggleSlider(this.game, toggle('screenShake'), GameData.settings.screenShake);
+    this.shakeSlider = new ToggleSlider(this.game, toggle('screenShake'), this.game.data.settings.screenShake);
     this.shakeSlider.x = this.shakeText.x;
     this.shakeSlider.top = this.shakeText.bottom;
 
     this.mutedText = this.add.text(0, 0, 'Muted', this.game.fonts.smallText);
     this.mutedText.anchor.setTo(0.5, 0.5);
     this.mutedText.right = this.shakeText.left - margin;
-    this.mutedSlider = new ToggleSlider(this.game, toggle('muted'), GameData.settings.muted);
+    this.mutedSlider = new ToggleSlider(this.game, toggle('muted'), this.game.data.settings.muted);
     this.mutedSlider.x = this.mutedText.x;
     this.mutedSlider.top = this.mutedText.bottom;
 
     this.vibrationText = this.add.text(0, 0, 'Vibration', this.game.fonts.smallText);
     this.vibrationText.anchor.setTo(0.5, 0.5);
     this.vibrationText.left = this.shakeText.right + margin;
-    this.vibrationSlider = new ToggleSlider(this.game, toggle('vibration'), GameData.settings.vibration);
+    this.vibrationSlider = new ToggleSlider(this.game, toggle('vibration'), this.game.data.settings.vibration);
     this.vibrationSlider.x = this.vibrationText.x;
     this.vibrationSlider.top = this.shakeText.bottom;
 

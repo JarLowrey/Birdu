@@ -26,24 +26,22 @@ export default class GameData {
 
     this.savedGame = {
       sprites: [],
-      player: {},
+      player: null,
       score: 0,
       level: 0,
       comboCount: 0
     };
 
     this._stats = {
-      unlockedBirdSprites: [17],
-      kills: null,
-      medals: null,
-      playerFrame: 17,
+      unlockedBirdSprites: [defaults.playerFrame],
+      kills: new Array(defaults.maxBirdFrame + 1).fill(0),
+      medals: new Array(defaults.medals.max + 1).fill(0),
+      playerFrame: defaults.playerFrame,
       bests: {
         level: 0,
         score: 0
       }
     };
-    this._stats.kills = new Array(defaults.maxBirdFrame + 1).fill(0);
-    this._stats.medals = new Array(defaults.medals.max + 1).fill(0);
 
     this._settings = {
       vibration: true,
@@ -71,7 +69,7 @@ export default class GameData {
 
 
   resetGame() {
-    this.savedGame.player = {};
+    this.savedGame.player = null;
     this.savedGame.sprites = [];
     this.savedGame.comboCount = 0;
     this.savedGame.level = 0;

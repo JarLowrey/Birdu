@@ -3,7 +3,6 @@
  *
  * Flies up to the scoreLabel, increments game score, and disappears
  */
-import GameData from '../Helpers/GameData';
 
 export default class MovingScore extends Phaser.Text {
   static className() {
@@ -21,8 +20,9 @@ export default class MovingScore extends Phaser.Text {
   reset() {
     super.reset();
 
-    this.x = GameData.player.x;
-    this.y = GameData.player.y;
+    let player = this.game.data.play.player;
+    this.x = player.x;
+    this.y = player.y;
   }
 
   startMovement(score, scoreLabel,
@@ -65,7 +65,7 @@ export default class MovingScore extends Phaser.Text {
       //When the animation finishes, destroy this score label, trigger the total score labels animation and add the score
       this.movementTween.onComplete.add(function() {
         this.kill();
-        this.game.state.states.Game.scoreBuffer += this.score;
+        this.game.state.states.Game.updateScoreFromBuffer(this.score);
       }, this);
     }
 

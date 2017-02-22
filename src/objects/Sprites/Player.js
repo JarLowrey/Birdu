@@ -4,7 +4,6 @@
  * Main Player
  */
 import Bird from '../Sprites/Bird';
-
 import GameData from '../Helpers/GameData';
 
 export default class Player extends Bird {
@@ -18,6 +17,10 @@ export default class Player extends Bird {
   constructor(game) {
     super(game);
 
+    if (this.game.data.savedGame.player) {
+      this.deserialize(this.game.data.savedGame.player);
+    }
+
     this.drag_value = 70;
     this.grav_value = this.drag_value + 30;
     this.prev_pointer = new Phaser.Point(0, 0);
@@ -28,7 +31,7 @@ export default class Player extends Bird {
     this.anchor.setTo(0.5, 0.5);
 
     // add animations + tweens specific for this sprite, and and play them if needed
-    this.frameId = GameData.playerFrame;
+    this.frameId = this.game.data.stats.playerFrame;
     this.animations.add('idling', Bird.getFlyingFrames(this.frameId, this.game), this.game.animationInfo.flapFPS, true);
     this.animations.play('idling');
 
@@ -190,11 +193,11 @@ export default class Player extends Bird {
   }
 
   getSpeed() {
-    return GameData.scaleMultipler(this.game.speeds.player, false);
+    return GameData.scaleMultipler(this.game.speeds.player, this.game.data.play.level, false);
   }
 
   levelupArea() {
-    const multiplier = GameData.scaleMultipler(this.game.integers.area.levelup, false);
+    const multiplier = GameData.scaleMultipler(this.game.integers.area.levelup, this.game.data.play.level, false);
     return this.game.originalPlayerArea * multiplier;
   }
 }

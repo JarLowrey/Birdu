@@ -23,22 +23,13 @@ import Meat from '../objects/Helpers/Meat';
 
 export default class Game extends Phaser.State {
 
-  get scoreBuffer() {
-    return this._scoreBuffer;
-  }
-  set scoreBuffer(newbuffer) {
-    this._scoreBuffer = newbuffer;
-    this.updateScoreFromBuffer();
-    this.scoreLabelTween.start();
-  }
-
   create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
     this.background = FactoryUi.displayBg(this.game);
 
-    GameData.player = new Player(this.game);
-    this.add.existing(GameData.player);
+    this.game.data.play.player = new Player(this.game);
+    this.add.existing(this.game.data.play.player);
 
     this.game.meat = new Meat(this.game);
 
@@ -48,7 +39,7 @@ export default class Game extends Phaser.State {
     //Create the score label at top right of screen
     this.scoreLabel = this.add.text(this.game.world.width - this.game.dimen.margin.sideOfScreen,
       this.game.dimen.margin.sideOfScreen,
-      GameData.score,
+      this.game.data.play.score,
       this.game.fonts.score);
     this.scoreLabel.anchor.setTo(1, 0);
     //Create a tween to grow (for 200ms) and then shrink back to normal size (in 200ms)
@@ -71,7 +62,7 @@ export default class Game extends Phaser.State {
 
     //progress bar
     this.pieProgress = new PieProgress(this.game, 0, 0,
-      this.game.dimen.radius.progressPie, '#fff', -90, GameData.level);
+      this.game.dimen.radius.progressPie, '#fff', -90, this.game.data.play.level);
     this.pieProgress.setProgress(0);
     this.game.world.add(this.pieProgress);
 
@@ -91,11 +82,10 @@ export default class Game extends Phaser.State {
   setupState() {
     this.game.spritePools = new Pools(this.game);
 
-    this.loadLevel();
     this.game.world.bringToTop(this.pauseText); //bring pause text over top of all sprites created
 
-    this.pieProgress.setText(GameData.level);
-    this.scoreLabel.setText(GameData.score.toLocaleString());
+    this.pieProgress.setText(this.game.data.play.level);
+    this.scoreLabel.setText(this.game.data.play.score.toLocaleString());
 
     this.textUpdateTimer = this.game.time.create(false);
     this.textUpdateTimer.start();
@@ -115,14 +105,13 @@ export default class Game extends Phaser.State {
     //combo variables
     this.comboBaseScoreFromEating = 0; //score that is added by eating birds in a combo series. Nothing added from the combo itself
     this.comboTimer = null;
-    //set comboCount in loadLevel
 
     //load audio
     this.add.audio('tweet').play();
 
     this.setStartingUiVisibility();
 
-    if (GameData.score) {
+    if (this.game.data.play.score) {
       this.pauseGame();
     }
   }
@@ -160,7 +149,7 @@ export default class Game extends Phaser.State {
   }
 
   spawnEnemy() {
-    if (!GameData.player.alive) return;
+    if (!this.game.data.play.player.alive) return;
 
     //don't spawn if screen too crowded
     if (this.game.spritePools.ratioEnemyAreaToGameArea() < this.game.dimen.maxSpawningArea) {
@@ -168,12 +157,12 @@ export default class Game extends Phaser.State {
     }
   }
   spawnStar() {
-    if (!GameData.player.alive) return;
+    if (!this.game.data.play.player.alive) return;
     this.game.spritePools.spawn(Star.className());
     this.starSpawnTimer.add(this.getStarSpawnTime(), this.spawnCloud, this);
   }
   spawnCloud() {
-    if (!GameData.player.alive) return;
+    if (!this.game.data.play.player.alive) return;
     this.game.spritePools.spawn(Cloud.className());
     this.starSpawnTimer.add(this.getCloudSpawnTime(), this.spawnCloud, this);
   }
@@ -192,8 +181,8 @@ export default class Game extends Phaser.State {
       this.pauseBtn.visible = false;
       this.pauseText.visible = true;
 
-      if (GameData.player.alive) {
-        this.saveLevel();
+      if (this.game.data.play.player.alive) {
+        this.game.data.saveGame();
       }
 
       this.game.paused = true; //actually pause the game
@@ -217,15 +206,15 @@ export default class Game extends Phaser.State {
   }
 
   birdCollide(player, enemy) {
-    const orginalPlayerWidth = GameData.player.width;
+    const orginalPlayerWidth = this.game.data.play.player.width;
     const enemyArea = enemy.area();
 
-    Player.birdsCollide.bind(this)(GameData.player, enemy);
-    if (!GameData.player.alive || enemy.alive) return; //enemy will remain alive if player is invincible
+    Player.birdsCollide.bind(this)(this.game.data.play.player, enemy);
+    if (!this.game.data.play.player.alive || enemy.alive) return; //enemy will remain alive if player is invincible
 
     //Add enemy's area to total score
     //show this meal's score travel up towards total score. add it to current combo
-    const playerArea = GameData.player.area();
+    const playerArea = this.game.data.play.player.area();
     var scoreIncrease = Math.round(Math.sqrt(enemyArea));
 
     //create the label that flies up to the main score label
@@ -243,7 +232,7 @@ export default class Game extends Phaser.State {
       While waiting for coin player can still increase score, so no harm is done by making them wait to progress in level.
     */
     if (!this.levelupCoin.visible) {
-      const areaToLevelUp = GameData.player.levelupArea(GameData.level);
+      const areaToLevelUp = this.game.data.play.player.levelupArea(this.game.data.play.level);
 
       this.pieProgress.setProgress(playerArea / areaToLevelUp);
 
@@ -252,49 +241,30 @@ export default class Game extends Phaser.State {
         this.levelUp();
       }
     } else { //if levelupCoin is traveling, don't increase bird size
-      GameData.player.setSizeFromWidth(orginalPlayerWidth);
+      this.game.data.play.player.setSizeFromWidth(orginalPlayerWidth);
     }
   }
 
-  shutdown() {
-    this.saveLevel();
-  }
-
-  saveLevel() {
-    //save general variables
-    GameData.score = GameData.score + this.scoreBuffer;
-    this._scoreBuffer = 0;
-
-    //auto-save in Db storage
-    GameData.sprites = this.game.spritePools.serialize();
-    GameData.serializedPlayerInfo = GameData.player.serialize();
-
-    DbAccess.setKey('comboCount', GameData.comboCount);
-    DbAccess.setKey('level', GameData.level);
-    DbAccess.setKey('score', GameData.score);
-  }
-
-  loadLevel() {
-    if (GameData.serializedPlayerInfo && GameData.sprites.length > 0) {
-      GameData.player.deserialize(GameData.serializedPlayerInfo);
-      this.game.spritePools.deserialize(GameData.sprites);
+  updateScoreFromBuffer(scoreInc) {
+    if (scoreInc > 0) {
+      this.game.data.play.scoreBuffer += scoreInc;
     }
 
-    this._scoreBuffer = 0;
-  }
+    let buffer = this.game.data.play.scoreBuffer;
 
-  updateScoreFromBuffer() {
-    if (this._scoreBuffer > 0) {
+    if (buffer > 0) {
+      this.scoreLabelTween.start();
+
       var change;
-      if (this._scoreBuffer < 20) {
-        change = this._scoreBuffer;
+      if (buffer < 20) {
+        change = buffer;
       } else {
-        change = Math.ceil(this._scoreBuffer / 2);
+        change = Math.ceil(buffer / 2);
       }
 
-      GameData.score += change;
-      this.scoreLabel.setText(GameData.score.toLocaleString());
-      this._scoreBuffer -= change;
+      this.game.data.play.score += change;
+      this.scoreLabel.setText(this.game.data.play.score.toLocaleString());
+      this.game.data.play.scoreBuffer = buffer - change;
 
       this.textUpdateTimer.add(this.game.durations.textUpdate, this.updateScoreFromBuffer, this);
     }
@@ -314,7 +284,7 @@ export default class Game extends Phaser.State {
   }
 
   levelUp() {
-    GameData.level++;
+    this.game.data.play.level++;
     this.pieProgress.setProgress(0);
 
     //start moving the coin towards the player

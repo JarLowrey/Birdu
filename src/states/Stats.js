@@ -8,7 +8,6 @@
 import Bird from '../objects/Sprites/Bird';
 import Alert from '../objects/Alert';
 
-import GameData from '../objects/Helpers/GameData';
 import FactoryUi from '../objects/Helpers/FactoryUi';
 
 export default class Stats extends Phaser.State {
@@ -19,8 +18,8 @@ export default class Stats extends Phaser.State {
     this.background = FactoryUi.displayBg(this.game);
     this.stateBtns = FactoryUi.createStateChangeButtons(this.game);
 
-    const score = this.game.nFormatter(GameData.maxScore);
-    const level = this.game.nFormatter(GameData.maxLevel);
+    const score = this.game.nFormatter(this.game.data.stats.bests.score);
+    const level = this.game.nFormatter(this.game.data.stats.bests.level);
     //setup purchases and purchase buttons
     if (this.game.device.cordova) {
       this.initStore();
@@ -29,7 +28,7 @@ export default class Stats extends Phaser.State {
         store.order(this.allSkinsProductId);
       }, this, 'buyPressed', 'buy', 'buyPressed', 'buy');
 
-      if (this.allSkinsProduct.canPurchase || GameData.getLockedBirds(this.game).length == 0) {
+      if (this.allSkinsProduct.canPurchase || this.game.data.getLockedBirds().length == 0) {
         this.buyBtn.visible = false;
       }
     }
@@ -78,7 +77,7 @@ export default class Stats extends Phaser.State {
   applyUnlockAllSkinsIAP() {
     //check this purchase is needed. There is a bug in the purchase plugin used, products will keep calling the 'approved' function even if the product is 'finished'
     //https://github.com/j3k0/cordova-plugin-purchase/issues/483
-    var lockedBirds = GameData.getLockedBirds(this.game);
+    var lockedBirds = this.game.data.getLockedBirds(this.game);
     if (lockedBirds.length == 0) return;
 
     const unlockAlertText = 'All skins unlocked!!\n\n' + this.game.strings.devThankYou;
@@ -86,8 +85,8 @@ export default class Stats extends Phaser.State {
     this.buyBtn.visible = false;
 
     //unlock sprites
-    var allBirds = GameData.unlockedBirdSprites.concat(lockedBirds);
-    GameData.unlockedBirdSprites = allBirds;
+    var allBirds = this.game.data.stats.unlockedBirdSprites.concat(lockedBirds);
+    this.game.data.stats.unlockedBirdSprites = allBirds;
 
     //display new unlocks
     this.showUnlockedBirds();
@@ -148,7 +147,7 @@ export default class Stats extends Phaser.State {
   }
 
   placeBirdsInGrid() {
-    const killData = GameData.kills;
+    const killData = this.game.data.stats.kills;
     const width = this.game.dimen.width.gridUnlockableSprites;
 
     var birdGrid = new Phaser.Group(this.game);
@@ -203,7 +202,7 @@ export default class Stats extends Phaser.State {
   createMedals() {
     var medals = new Phaser.Group(this.game);
     var prevMedal = null;
-    const medalCounts = GameData.medals;
+    const medalCounts = this.game.data.stats.medals;
 
     for (var i = 0; i < medalCounts.length; i++) {
       var medal = FactoryUi.createMedal(this.game, i);
@@ -235,9 +234,9 @@ export default class Stats extends Phaser.State {
 
       const unlockIntructions = this.getUnlockableInstructionString(birdId);
 
-      if (GameData.unlockedBirdSprites.includes(birdId)) { //already unlocked
+      if (this.game.data.stats.unlockedBirdSprites.includes(birdId)) { //already unlocked
         this.prevAlert = new Alert(this.game, unlockIntructions + '\n' + this.game.strings.skinSet);
-        GameData.playerFrame = birdId;
+        this.game.data.stats.playerFrame = birdId;
       } else { //locked (not unlocked yet)
         this.prevAlert = new Alert(this.game, unlockIntructions);
       }
@@ -272,7 +271,7 @@ export default class Stats extends Phaser.State {
   }
 
   showUnlockedBirds() {
-    GameData.unlockedBirdSprites.forEach(function(birdId) {
+    this.game.data.stats.unlockedBirdSprites.forEach(function(birdId) {
       const bird = this.birdGrid.getChildAt(this.getRow(birdId)).getChildAt(this.getCol(birdId));
       bird.tint = 0xffffff;
       bird.alpha = 1;

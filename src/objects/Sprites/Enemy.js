@@ -65,11 +65,11 @@ export default class Enemy extends Bird {
   fancyKill() {
     super.fancyKill();
 
-    GameData.kills[this.frameId]++;
+    this.game.data.stats.kills[this.frameId]++;
   }
 
   setSpriteSize() {
-    const max = GameData.player.levelupArea() * 0.65;
+    const max = this.game.data.play.player.levelupArea() * 0.65;
     const min = this.game.originalPlayerArea / 4;
     const range = GameData.floatBetween(min, max);
     //var multiplier = GameData.scaleMultipler(this.game.integers.area.enemy);
@@ -85,7 +85,7 @@ export default class Enemy extends Bird {
   }
 
   getSpeed() {
-    if (!this.speed) this.speed = GameData.player.getSpeed() * GameData.scaleMultipler(this.game.speeds.enemyMultiplier);
+    if (!this.speed) this.speed = this.game.data.play.player.getSpeed() * GameData.scaleMultipler(this.game.speeds.enemyMultiplier, this.game.data.play.level);
     return this.speed;
   }
 
@@ -94,7 +94,7 @@ export default class Enemy extends Bird {
     var randomEnemyFrame;
     do {
       randomEnemyFrame = Phaser.Math.between(0, this.game.animationInfo.maxBirdFrame);
-    } while (randomEnemyFrame == GameData.playerFrame);
+    } while (randomEnemyFrame == this.game.data.stats.playerFrame);
     this.frameId = randomEnemyFrame;
 
     this.animations.play(Bird.birdFrameName(this.frameId));

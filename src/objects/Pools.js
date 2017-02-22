@@ -12,8 +12,6 @@ import PoopSplatter from '../objects/Sprites/PoopSplatter';
 import Poop from '../objects/Sprites/Poop';
 import MovingScore from '../objects/Sprites/MovingScore';
 
-import GameData from '../objects/Helpers/GameData';
-
 export default class Pools {
 
   constructor(game) {
@@ -62,6 +60,10 @@ export default class Pools {
     }
 
     this.game.world.bringToTop(this.getPool(PoopSplatter.className())); //ensure poop splatters stay in front of all other sprites
+
+    if (this.game.data.savedGame.sprites.length > 0) {
+      this.deserialize(this.game.data.savedGame.sprites);
+    }
   }
 
   serialize() {
@@ -99,7 +101,7 @@ export default class Pools {
   }
 
   spawnEnemy() {
-    const probSpawnScared = Math.min(this.game.integers.spawnProbability.scared.max, GameData.level / 100 + this.game.integers.spawnProbability.scared.min);
+    const probSpawnScared = Math.min(this.game.integers.spawnProbability.scared.max, this.game.data.play.level / 100 + this.game.integers.spawnProbability.scared.min);
 
     const className = (Math.random() < probSpawnScared) ? ScaredEnemy.className() : Enemy.className();
 
@@ -121,11 +123,12 @@ export default class Pools {
   collideAll() {
     const enemies = this.getPool(Enemy.className());
     const scaredEnemies = this.getPool(ScaredEnemy.className());
+    const player = this.game.data.play.player;
 
     //collide enemies with player
-    this.game.physics.arcade.collide(GameData.player, enemies,
+    this.game.physics.arcade.collide(player, enemies,
       this.game.state.states.Game.birdCollide, null, this.game.state.states.Game);
-    this.game.physics.arcade.collide(GameData.player, scaredEnemies,
+    this.game.physics.arcade.collide(player, scaredEnemies,
       this.game.state.states.Game.birdCollide, null, this.game.state.states.Game);
 
     //collide enemies with each other - removed as it makes it possible for enemies to change area as you chase (they run into others), resulting in frustrating deaths
@@ -134,9 +137,9 @@ export default class Pools {
     this.game.physics.arcade.collide(enemies, scaredEnemies, Bird.birdsCollide, null, this);
 
     //overlap powerups/powerdowns
-    this.game.physics.arcade.overlap(GameData.player, this.getPool(Star.className()), Star.touchedPlayer, null, this);
-    this.game.physics.arcade.overlap(GameData.player, this.getPool(Cloud.className()), Cloud.touchedPlayer, null, this);
-    this.game.physics.arcade.overlap(GameData.player, this.getPool(Poop.className()), Poop.touchedPlayer, null, this);
+    this.game.physics.arcade.overlap(player, this.getPool(Star.className()), Star.touchedPlayer, null, this);
+    this.game.physics.arcade.overlap(player, this.getPool(Cloud.className()), Cloud.touchedPlayer, null, this);
+    this.game.physics.arcade.overlap(player, this.getPool(Poop.className()), Poop.touchedPlayer, null, this);
   }
 
   isEnemy(someClass) {

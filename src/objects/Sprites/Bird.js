@@ -3,7 +3,6 @@
  * contains properties common to all children sprites in this game
  */
 import ExtendedSprite from '../Sprites/ExtendedSprite';
-import GameData from '../Helpers/GameData';
 
 export default class Bird extends ExtendedSprite {
   static className() {
@@ -68,7 +67,8 @@ export default class Bird extends ExtendedSprite {
       smallBird.fancyKill();
     }
 
-    if (largeBird != GameData.player) {
+    const player = game.data.play.player;
+    if (largeBird != player) {
       const angle = (largeBird.originalAngle === undefined) ? largeBird.angle : largeBird.originalAngle; //make adjustment for ScaredBird
       game.physics.arcade.velocityFromAngle(angle, largeBird.getSpeed(), largeBird.body.velocity);
     }

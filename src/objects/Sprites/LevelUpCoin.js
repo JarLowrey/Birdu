@@ -40,8 +40,9 @@ export default class LevelUpCoin extends ExtendedSprite {
     if (!this.alive) return;
 
     if (this.visible) {
-      this.game.physics.arcade.moveToObject(this, GameData.player, this.speed);
-      this.game.physics.arcade.overlap(GameData.player, this, this.coinReachedPlayer, null, this);
+      const player = this.game.data.play.player;
+      this.game.physics.arcade.moveToObject(this, player, this.speed);
+      this.game.physics.arcade.overlap(player, this, this.coinReachedPlayer, null, this);
     }
   }
 
@@ -54,7 +55,9 @@ export default class LevelUpCoin extends ExtendedSprite {
     this.game.add.audio('levelup').play();
 
     //update player's size, sprite, speed, etc as necessary
-    GameData.player.setSizeFromWidth(this.game.dimen.width.playerOriginal);
-    this.game.state.states.Game.pieProgress.setText(GameData.level);
+    const player = this.game.data.play.player;
+    const level = this.game.data.play.level;
+    player.setSizeFromWidth(this.game.dimen.width.playerOriginal);
+    this.game.state.states.Game.pieProgress.setText(level);
   }
 }

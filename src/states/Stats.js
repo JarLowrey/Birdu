@@ -236,7 +236,7 @@ export default class Stats extends Phaser.State {
 
       if (this.game.data.stats.unlockedBirdSprites.includes(birdId)) { //already unlocked
         this.prevAlert = new Alert(this.game, unlockIntructions + '\n' + this.game.strings.skinSet);
-        this.game.data.stats.playerFrame = birdId;
+        this.game.data.settings.playerFrame = birdId;
       } else { //locked (not unlocked yet)
         this.prevAlert = new Alert(this.game, unlockIntructions);
       }

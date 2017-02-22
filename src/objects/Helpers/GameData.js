@@ -40,7 +40,6 @@ export default class GameData {
       unlockedBirdSprites: [defaults.playerFrame],
       kills: new Array(defaults.maxBirdFrame + 1).fill(0),
       medals: new Array(defaults.medals.max + 1).fill(0),
-      playerFrame: defaults.playerFrame,
       bests: {
         level: 0,
         score: 0
@@ -48,9 +47,10 @@ export default class GameData {
     };
 
     this.settings = {
-      vibration: true,
-      screenShake: true,
-      muted: false
+      playerFrame: defaults.playerFrame,
+      vibration: defaults.settings.vibration,
+      screenShake: defaults.settings.screenShake,
+      muted: defaults.settings.muted
     };
 
   }

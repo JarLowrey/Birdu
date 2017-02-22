@@ -94,7 +94,7 @@ export default class Enemy extends Bird {
     var randomEnemyFrame;
     do {
       randomEnemyFrame = Phaser.Math.between(0, this.game.animationInfo.maxBirdFrame);
-    } while (randomEnemyFrame == this.game.data.stats.playerFrame);
+    } while (randomEnemyFrame == this.game.data.settings.playerFrame);
     this.frameId = randomEnemyFrame;
 
     this.animations.play(Bird.birdFrameName(this.frameId));

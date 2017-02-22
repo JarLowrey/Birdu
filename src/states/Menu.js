@@ -18,7 +18,7 @@ export default class Menu extends Phaser.State {
     this.titleText.anchor.setTo(0.5, 0.5);
 
     //main image/logo + its animationsphaser
-    this.sprite = this.add.sprite(0, 0, this.game.spritesheetKey, Bird.birdFrameName(this.game.data.stats.playerFrame, 1));
+    this.sprite = this.add.sprite(0, 0, this.game.spritesheetKey, Bird.birdFrameName(this.game.data.settings.playerFrame, 1));
     this.sprite.width = this.game.dimen.width.menuSprite;
     this.sprite.scale.y = this.sprite.scale.x;
     this.sprite.anchor.setTo(0.5, 0.5);

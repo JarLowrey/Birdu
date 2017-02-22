@@ -27,7 +27,7 @@ export default class Player extends Bird {
     this.anchor.setTo(0.5, 0.5);
 
     // add animations + tweens specific for this sprite, and and play them if needed
-    this.frameId = this.game.data.stats.playerFrame;
+    this.frameId = this.game.data.settings.playerFrame;
     this.animations.add('idling', Bird.getFlyingFrames(this.frameId, this.game), this.game.animationInfo.flapFPS, true);
     this.animations.play('idling');
 

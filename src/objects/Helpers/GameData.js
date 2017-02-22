@@ -85,7 +85,7 @@ export default class GameData {
 
   saveGame() {
     //auto-save in Db storage
-    this.savedGame.player = this.player.serialize();
+    this.savedGame.player = this.play.player.serialize();
     this.savedGame.sprites = this.game.spritePools.serialize();
     this.savedGame.comboCount = this.play.comboCount;
     this.savedGame.level = this.play.level;

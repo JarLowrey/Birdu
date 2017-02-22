@@ -17,10 +17,6 @@ export default class Player extends Bird {
   constructor(game) {
     super(game);
 
-    if (this.game.data.savedGame.player) {
-      this.deserialize(this.game.data.savedGame.player);
-    }
-
     this.drag_value = 70;
     this.grav_value = this.drag_value + 30;
     this.prev_pointer = new Phaser.Point(0, 0);
@@ -58,19 +54,38 @@ export default class Player extends Bird {
     this.invincibleIndicator.pause();
 
     this.invincibleJingle = this.game.add.audio('invincible');
+
+    if (this.game.data.savedGame.player) {
+      this.deserialize(this.game.data.savedGame.player);
+    }
   }
 
   deserialize(info) {
     super.deserialize(info);
+
+    if (info.posInvincibleJingle >= 0) {
+      this.makeInvincible(info.posInvincibleJingle);
+    }
+  }
+  serialize() {
+    const info = super.serialize();
+
+    if (this.invincible) {
+      info.posInvincibleJingle = this.invincibleJingle.currentTime / 1000;
+    } else {
+      info.posInvincibleJingle = -1;
+    }
+
+    return info;
   }
 
-  makeInvincible() {
+  makeInvincible(jingleStartingTime) {
     this.invincible = true;
     if (!this.game.bgMusic.paused) this.game.bgMusic.pause();
 
     this.invincibleIndicator.resume();
-
-    this.invincibleJingle.restart();
+    console.log(jingleStartingTime)
+    this.invincibleJingle.restart(null, jingleStartingTime);
     this.invincibleJingle.onStop.add(function() {
       this.invincible = false;
 

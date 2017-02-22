@@ -47,7 +47,7 @@ export default class Star extends ExtendedSprite {
   static touchedPlayer(player, star) {
     star.kill();
 
-    player.makeInvincible();
+    player.makeInvincible(0);
   }
 
   getSpeed() {

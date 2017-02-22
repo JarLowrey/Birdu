@@ -91,8 +91,10 @@ export default class ExtendedSprite extends Phaser.Sprite {
     this.x = info.x;
     this.y = info.y;
 
-    this.body.velocity.x = info.body.velocity.x;
-    this.body.velocity.y = info.body.velocity.y;
+    if (this.body) {
+      this.body.velocity.x = info.body.velocity.x;
+      this.body.velocity.y = info.body.velocity.y;
+    }
 
     this.setLookingDirection(info.angle);
     this.alpha = info.alpha;

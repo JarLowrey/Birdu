@@ -84,7 +84,8 @@ export default class Preload extends Phaser.State {
   async copyDataToCache() {
     this.dataCopiedToCache = false;
 
-    await DbAccess.loadGame(this.game);
+    this.game.data = new GameData(this.game);
+    await this.game.data.load();
 
     this.dataCopiedToCache = true;
     this.checkPreloadFinishedAndTryStartNextState();
@@ -137,11 +138,13 @@ export default class Preload extends Phaser.State {
 
 
   overrideGameFunctionsToCheckForSettings() {
+    let game = this.game;
+
     //override Default functions to take advantage of the Settings
     //Override Phaser's Camera Shake
     const orginialShake = this.game.camera.shake;
     this.game.camera.shake = function() {
-      let useShake = GameData.settings.screenShake;
+      let useShake = game.data.settings.screenShake;
       if (useShake) orginialShake.bind(this)(...arguments);
     };
 
@@ -149,7 +152,7 @@ export default class Preload extends Phaser.State {
     //override Navigator's Vibrate
     const orginialVibrate = navigator.vibrate;
     navigator.vibrate = function() {
-      let useVibration = GameData.settings.vibration;
+      let useVibration = game.data.settings.vibration;
       if (useVibration) {
         orginialVibrate.bind(this)(...arguments);
       }

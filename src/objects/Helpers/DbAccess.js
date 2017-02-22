@@ -4,7 +4,6 @@
  * Co-opted from https://cordova.apache.org/docs/en/latest/cordova/storage/storage.html
  * With help from https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
  */
-import GameData from '../Helpers/GameData';
 
 export default class DbAccess {
 
@@ -21,7 +20,7 @@ export default class DbAccess {
     return DbAccess._db;
   }
 
-  static open(game) {
+  static open(game, defaultData) {
     return new Promise(function(resolve, reject) {
       var openRequest = window.indexedDB.open(DbAccess.dbName, DbAccess.dbVersion);
 
@@ -50,7 +49,7 @@ export default class DbAccess {
 
         // Once the store is created, populate it
         store.transaction.oncomplete = async function(event) {
-          DbAccess.initDb(game).then(function(value) {
+          DbAccess.initDb(game, defaultData).then(function(value) {
             resolve(DbAccess._db);
           }, function(reason) {
             reject(reason);
@@ -110,80 +109,19 @@ export default class DbAccess {
   /*
     HELPERS FOR THE 'config' OBJECT KEY STORE
   */
-  static async loadGame(game) {
-    await DbAccess.open(game);
 
-    //level stuff
-    let score = DbAccess.getKey('score');
-    let level = DbAccess.getKey('level');
-    let sprites = DbAccess.getKey('sprites');
-    let comboCount = DbAccess.getKey('comboCount');
-    let serializedPlayerInfo = DbAccess.getKey('serializedPlayerInfo');
+  static async initDb(game, defaultData) {
+    /*
+    //does not load in parallel
+    for (let key in defaultData) {
+      let save = DbAccess.setKey(key, defaultData[key]);
+      await save;
+    }
+    */
 
-    //long term stats
-    let maxScore = DbAccess.getKey('maxScore');
-    let maxLevel = DbAccess.getKey('maxLevel');
-    let playerFrame = DbAccess.getKey('playerFrame');
-    let unlockedBirdSprites = DbAccess.getKey('unlockedBirdSprites');
-    let kills = DbAccess.getKey('kills');
-    let medals = DbAccess.getKey('medals');
-    let settings = DbAccess.getKey('settings');
-
-    //load long-term storage into cache
-    GameData.score = await score;
-    GameData.level = await level;
-    GameData.sprites = await sprites;
-    GameData.comboCount = await comboCount;
-    GameData.serializedPlayerInfo = await serializedPlayerInfo;
-    GameData.maxScore = await maxScore;
-    GameData.maxLevel = await maxLevel;
-    GameData.playerFrame = await playerFrame;
-    GameData.unlockedBirdSprites = await unlockedBirdSprites;
-    GameData.kills = await kills;
-    GameData.medals = await medals;
-    GameData.settings = await settings;
-  }
-
-  static async initDb(game) {
-    const defaults = game.cache.getJSON('preloadJSON').defaults;
-
-    let score = DbAccess.setKey('score', 0);
-    let level = DbAccess.setKey('level', 0);
-    let sprites = DbAccess.setKey('sprites', []);
-    let comboCount = DbAccess.setKey('comboCount', 0);
-    let serializedPlayerInfo = DbAccess.setKey('serializedPlayerInfo', null);
-
-    let maxScore = DbAccess.setKey('maxScore', 0);
-    let maxLevel = DbAccess.setKey('maxLevel', 0);
-    let playerFrame = DbAccess.setKey('playerFrame', defaults.playerFrame);
-    let unlockedBirdSprites = DbAccess.setKey('unlockedBirdSprites', [defaults.playerFrame]);
-
-    const zeroKills = [];
-    zeroKills.length = defaults.maxBirdFrame + 1;
-    zeroKills.fill(0);
-    let kills = DbAccess.setKey('kills', zeroKills);
-
-    const zeroMedals = [];
-    zeroMedals.length = defaults.medals.max + 1; //zero indexed=+1
-    zeroMedals.fill(0);
-    let medals = DbAccess.setKey('medals', zeroMedals);
-
-    let settings = DbAccess.setKey('settings', defaults.settings);
-    game.sound.volume = Number(!defaults.settings.muted);
-
-    await score;
-    await level;
-    await sprites;
-    await comboCount;
-    await serializedPlayerInfo;
-
-    await maxScore;
-    await maxLevel;
-    await playerFrame;
-    await unlockedBirdSprites;
-    await kills;
-    await medals;
-    await settings;
+    await Promise.all(Object.keys(defaultData).map(async(key) => {
+      return await DbAccess.setKey(key, defaultData[key]);
+    }));
 
     console.log('db initialized');
 

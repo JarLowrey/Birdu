@@ -59,9 +59,6 @@ export default class Player extends Bird {
 
   deserialize(info) {
     super.deserialize(info);
-
-    this.body.velocity.x = 0;
-    this.body.velocity.y = 0;
   }
 
   makeInvincible() {

@@ -67,6 +67,8 @@ export default class Gameover extends Phaser.State {
     this.unlockedSprites = this.newlyUnlockedSprites();
     const allUnlocks = this.game.data.stats.unlockedBirdSprites.concat(this.unlockedSprites);
     this.game.data.stats.unlockedBirdSprites = allUnlocks;
+
+    this.game.data.saveStats();
   }
 
   displayNewlyUnlockedSprites() {

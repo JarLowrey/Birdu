@@ -36,11 +36,10 @@ export default class Settings extends Phaser.State {
 
     //Event function on volume buttons clicked
     const toggle = function(dataName) {
-      return function() {
+      return function(isOn) {
         //change settings
-        this.game.data.settings[dataName] = !this.game.data.settings[dataName];
-
-        if (dataName == 'muted') this.game.sound.volume = Number(!this.game.data.settings.muted); //apply volume settings
+        this.game.data.settings[dataName] = isOn;
+        this.game.data.saveSettings();
       };
     };
 

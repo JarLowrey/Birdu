@@ -13,6 +13,10 @@ export default class GameData {
     this._defineDefaultData();
   }
 
+  _applySettings() {
+    this.game.sound.volume = Number(!this.game.data.settings.muted); //apply volume settings
+  }
+
   _defineDefaultData() {
     const defaults = this.game.cache.getJSON('preloadJSON').defaults;
 
@@ -32,7 +36,7 @@ export default class GameData {
       comboCount: 0
     };
 
-    this._stats = {
+    this.stats = {
       unlockedBirdSprites: [defaults.playerFrame],
       kills: new Array(defaults.maxBirdFrame + 1).fill(0),
       medals: new Array(defaults.medals.max + 1).fill(0),
@@ -43,7 +47,7 @@ export default class GameData {
       }
     };
 
-    this._settings = {
+    this.settings = {
       vibration: true,
       screenShake: true,
       muted: false
@@ -52,21 +56,13 @@ export default class GameData {
   }
 
   //auto update long-term storage for certain properties
-  get settings() {
-    return this._settings;
+  saveStats() {
+    DbAccess.setKey('stats', this.stats);
   }
-  set settings(val) {
-    this._settings = val;
-    DbAccess.setKey('settings', this._settings);
+  saveSettings() {
+    DbAccess.setKey('settings', this.settings);
+    this._applySettings();
   }
-  get stats() {
-    return this._stats;
-  }
-  set stats(val) {
-    this._stats = val;
-    DbAccess.setKey('stats', this._stats);
-  }
-
 
   resetGame() {
     this.savedGame.player = null;
@@ -96,9 +92,9 @@ export default class GameData {
 
   async load() {
     await DbAccess.open(this.game, {
-      'stats': this._stats,
+      'stats': this.stats,
       'savedGame': this.savedGame,
-      'settings': this._settings
+      'settings': this.settings
     });
 
     //load long term info
@@ -108,8 +104,10 @@ export default class GameData {
 
     //load long-term storage into cache
     this.savedGame = await savedGame;
-    this._stats = await stats;
-    this._settings = await settings;
+    this.stats = await stats;
+    this.settings = await settings;
+
+    this._applySettings();
   }
   /*
     Data Helpers/Convenience methods that use the static getter/setter wrappers
@@ -120,7 +118,7 @@ export default class GameData {
       allBirdIds.add(i);
     }
 
-    var unlockedBirds = new Set(this._stats.unlockedBirdSprites);
+    var unlockedBirds = new Set(this.stats.unlockedBirdSprites);
     var lockedBirds = [...allBirdIds].filter(x => !unlockedBirds.has(x)); //find all bird ids that are not in the unlocked set but ARE in the allBird set
 
     return lockedBirds;

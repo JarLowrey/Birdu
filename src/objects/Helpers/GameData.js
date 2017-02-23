@@ -20,21 +20,7 @@ export default class GameData {
   _defineDefaultData() {
     const defaults = this.game.cache.getJSON('preloadJSON').defaults;
 
-    this.play = {
-      score: 0,
-      level: 0,
-      scoreBuffer: 0,
-      comboCount: 0,
-      player: null
-    };
-
-    this.savedGame = {
-      sprites: [],
-      player: null,
-      score: 0,
-      level: 0,
-      comboCount: 0
-    };
+    this._resetPlayData();
 
     this.stats = {
       unlockedBirdSprites: [defaults.playerFrame],
@@ -52,7 +38,20 @@ export default class GameData {
       screenShake: defaults.settings.screenShake,
       muted: defaults.settings.muted
     };
+  }
 
+  _resetPlayData() {
+    this.play = {
+      score: 0,
+      level: 0,
+      comboCount: 0,
+      player: null,
+
+      serializedObjects: {
+        player: null,
+        sprites: []
+      }
+    };
   }
 
   //auto update long-term storage for certain properties
@@ -65,35 +64,27 @@ export default class GameData {
   }
 
   resetGame() {
-    this.savedGame.player = null;
-    this.savedGame.sprites = [];
-    this.savedGame.comboCount = 0;
-    this.savedGame.level = 0;
-    this.savedGame.score = 0;
-    DbAccess.setKey('savedGame', this.savedGame);
-
-    this.play.player = null;
-    this.play.score = 0;
-    this.play.level = 0;
-    this.play.comboCount = 0;
-    this.play.scoreBuffer = 0;
+    this._resetPlayData();
+    DbAccess.setKey('savedGame', this.play);
   }
 
   saveGame() {
     //auto-save in Db storage
-    this.savedGame.player = this.play.player.serialize();
-    this.savedGame.sprites = this.game.spritePools.serialize();
-    this.savedGame.comboCount = this.play.comboCount;
-    this.savedGame.level = this.play.level;
-    this.savedGame.score = this.play.score + this.play.scoreBuffer;
-    this.play.scoreBuffer = 0;
-    DbAccess.setKey('savedGame', this.savedGame);
+    this.play.serializedObjects.player = this.play.player.serialize();
+    this.play.serializedObjects.sprites = this.game.spritePools.serialize();
+
+    //copy play data to a temp array and remove pointers to sprites (otherwise it crashes)
+    let save = {};
+    Object.assign(save, this.play);
+    save.player = null;
+
+    DbAccess.setKey('savedGame', save);
   }
 
   async load() {
     await DbAccess.open(this.game, {
       'stats': this.stats,
-      'savedGame': this.savedGame,
+      'savedGame': this.play,
       'settings': this.settings
     });
 
@@ -103,7 +94,7 @@ export default class GameData {
     let settings = DbAccess.getKey('settings');
 
     //load long-term storage into cache
-    this.savedGame = await savedGame;
+    this.play = await savedGame;
     this.stats = await stats;
     this.settings = await settings;
 

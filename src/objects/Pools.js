@@ -61,8 +61,8 @@ export default class Pools {
 
     this.game.world.bringToTop(this.getPool(PoopSplatter.className())); //ensure poop splatters stay in front of all other sprites
 
-    if (this.game.data.savedGame.sprites.length > 0) {
-      this.deserialize(this.game.data.savedGame.sprites);
+    if (this.game.data.play.serializedObjects.sprites.length > 0) {
+      this.deserialize(this.game.data.play.serializedObjects.sprites);
     }
   }
 

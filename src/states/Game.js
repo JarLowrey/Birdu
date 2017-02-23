@@ -37,6 +37,7 @@ export default class Game extends Phaser.State {
     this.add.existing(this.levelupCoin);
 
     //Create the score label at top right of screen
+    this.scoreBuffer = 0;
     this.scoreLabel = this.add.text(this.game.world.width - this.game.dimen.margin.sideOfScreen,
       this.game.dimen.margin.sideOfScreen,
       this.game.data.play.score,
@@ -182,6 +183,8 @@ export default class Game extends Phaser.State {
       this.pauseText.visible = true;
 
       if (this.game.data.play.player.alive) {
+        this.game.data.play.score += this.scoreBuffer;
+        this.scoreBuffer = 0;
         this.game.data.saveGame();
       }
 
@@ -247,10 +250,10 @@ export default class Game extends Phaser.State {
 
   updateScoreFromBuffer(scoreInc) {
     if (scoreInc > 0) {
-      this.game.data.play.scoreBuffer += scoreInc;
+      this.scoreBuffer += scoreInc;
     }
 
-    let buffer = this.game.data.play.scoreBuffer;
+    let buffer = this.scoreBuffer;
 
     if (buffer > 0) {
       this.scoreLabelTween.start();
@@ -264,7 +267,7 @@ export default class Game extends Phaser.State {
 
       this.game.data.play.score += change;
       this.scoreLabel.setText(this.game.data.play.score.toLocaleString());
-      this.game.data.play.scoreBuffer = buffer - change;
+      this.scoreBuffer = buffer - change;
 
       this.textUpdateTimer.add(this.game.durations.textUpdate, this.updateScoreFromBuffer, this);
     }

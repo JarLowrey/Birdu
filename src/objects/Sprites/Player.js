@@ -55,8 +55,8 @@ export default class Player extends Bird {
 
     this.invincibleJingle = this.game.add.audio('invincible');
 
-    if (this.game.data.savedGame.player) {
-      this.deserialize(this.game.data.savedGame.player);
+    if (this.game.data.play.serializedObjects.player) {
+      this.deserialize(this.game.data.play.serializedObjects.player);
     }
   }
 
@@ -66,6 +66,10 @@ export default class Player extends Bird {
     if (info.posInvincibleJingle >= 0) {
       this.makeInvincible(info.posInvincibleJingle);
     }
+
+    this.body.velocity.x = 0;
+    this.body.velocity.y = 0;
+    this.goTowardsLastActivePointer = false;
   }
   serialize() {
     const info = super.serialize();

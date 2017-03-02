@@ -16,7 +16,6 @@ import PieProgress from '../objects/Sprites/PieProgress';
 import Player from '../objects/Sprites/Player';
 
 import GameData from '../objects/Helpers/GameData';
-import DbAccess from '../objects/Helpers/DbAccess';
 import Pools from '../objects/Pools';
 import FactoryUi from '../objects/Helpers/FactoryUi';
 import Meat from '../objects/Helpers/Meat';

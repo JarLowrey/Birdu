@@ -80,7 +80,7 @@ export default class ExtendedSprite extends Phaser.Sprite {
           x: this.body.velocity.x,
           y: this.body.velocity.y
         }
-      }
+      };
     }
 
     return serializedInfo;

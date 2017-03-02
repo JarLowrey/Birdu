@@ -67,12 +67,12 @@
     "lint": "gulp lint",
     "start": "gulp",
     "test-dist": "npm run dist && browser-sync start -c gulpfile.js/bs-config.js",
-    "update": "npm update --dev && cd cordova-app && ../node_modules/.bin/cordova-check-plugins",
-    "cordovaReset": "rm -rf cordova-app/plugins && rm -rf cordova-app/platforms && cd cordova-app && ../node_modules/.bin/cordova platform add android && ../node_modules/.bin/cordova platform add windows && ../node_modules/.bin/cordova platform add ios && cd .. && npm run-script dist",
-    "build-hard-android": "npm run-script cordovaReset && cd cordova-app && ../node_modules/.bin/cordova build android",
-    "release-android": "echo \"NOTE: Must have build.json with key path and alias in your cordova-app dir. Cannot be used with Chrome remote debugging. apk will be output in cordova's android's build dir.\" && npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --release && adb logcat chromium:D SystemWebViewClient:D *:S ",
-    "debug-android": "echo \"Navigate to chrome://inspect/devices#devices in your desktops chrome to use remote-debugging (Chrome DevTools enabled on your device)\"  && npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --debug && adb logcat chromium:D SystemWebViewClient:D *:S ",
-    "emulate-android": "echo \"NOTE: Must have build.json with key path, pass, alias, and aliasPass in your cordova-app dir\" && npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --release --emulate --target=nexus4api19 && adb logcat chromium:D SystemWebViewClient:D *:S",
-    "run-android-previous": "npm run-script dist && cd cordova-app && ../node_modules/.bin/cordova run android --nobuild && adb logcat chromium:D SystemWebViewClient:D *:S"
+    "update": "npm update --dev && cd cordova-app && cordova-check-plugins",
+    "cordovaReset": "rm -rf cordova-app/plugins && rm -rf cordova-app/platforms && cd cordova-app && cordova platform add android && cordova platform add windows && cordova platform add ios && cd .. && npm run-script dist",
+    "build-hard-android": "npm run-script cordovaReset && cd cordova-app && cordova build android",
+    "release-android": "echo \"NOTE: Must have build.json with key path and alias in your cordova-app dir. Cannot be used with Chrome remote debugging. apk will be output in cordova's android's build dir.\" && npm run-script dist && cd cordova-app && cordova run android --release && adb logcat chromium:D SystemWebViewClient:D *:S ",
+    "debug-android": "echo \"Navigate to chrome://inspect/devices#devices in your desktops chrome to use remote-debugging (Chrome DevTools enabled on your device)\"  && npm run-script dist && cd cordova-app && cordova run android --debug && adb logcat chromium:D SystemWebViewClient:D *:S ",
+    "emulate-android": "echo \"NOTE: Must have build.json with key path, pass, alias, and aliasPass in your cordova-app dir\" && npm run-script dist && cd cordova-app && cordova run android --release --emulate --target=nexus4api19 && adb logcat chromium:D SystemWebViewClient:D *:S",
+    "run-android-previous": "npm run-script dist && cd cordova-app && cordova run android --nobuild && adb logcat chromium:D SystemWebViewClient:D *:S"
   }
 }

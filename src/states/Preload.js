@@ -10,7 +10,6 @@
 import assets from '../assets';
 
 import GameData from '../objects/Helpers/GameData';
-import DbAccess from '../objects/Helpers/DbAccess';
 
 export default class Preload extends Phaser.State {
 

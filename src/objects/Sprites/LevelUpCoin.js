@@ -4,7 +4,6 @@
  * flies to the player and applies a levelup upon collision
  */
 import ExtendedSprite from '../Sprites/ExtendedSprite';
-import GameData from '../Helpers/GameData';
 
 export default class LevelUpCoin extends ExtendedSprite {
 

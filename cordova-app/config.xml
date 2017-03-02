@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2000020" id="com.jtronlabs.birdu" ios-CFBundleVersion="2.2.0" version="2.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="2000030" id="com.jtronlabs.birdu" ios-CFBundleVersion="2.2.0" version="2.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Birdu</name>
     <description>
         It's a bird-eat-bird world out there, do what you must to survive.

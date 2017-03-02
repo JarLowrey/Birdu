@@ -88,7 +88,6 @@ export default class Player extends Bird {
     if (!this.game.bgMusic.paused) this.game.bgMusic.pause();
 
     this.invincibleIndicator.resume();
-    console.log(jingleStartingTime)
     this.invincibleJingle.restart(null, jingleStartingTime);
     this.invincibleJingle.onStop.add(function() {
       this.invincible = false;

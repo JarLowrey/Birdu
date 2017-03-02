@@ -55,7 +55,7 @@ export default class Boot extends Phaser.State {
     this.game.appName = preloadInfo.appName;
 
     console.log(this.game.devName + ' presents ' + this.game.appName);
-    console.log('Cordova loaded: ' + this.game.device.cordova);
+    console.log('Device = ', this.game.device); //check to make sure crosswalk, cordova, etc are working
 
     this.game.nFormatter = function(num, digits = 2) { //source: http://stackoverflow.com/questions/9461621/how-to-format-a-number-as-2-5k-if-a-thousand-or-more-otherwise-900-in-javascrip
       var si = [{

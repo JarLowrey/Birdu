@@ -103,9 +103,9 @@ export default class GameData {
   /*
     Data Helpers/Convenience methods that use the static getter/setter wrappers
   */
-  getLockedBirds(game) {
+  getLockedBirds() {
     var allBirdIds = new Set();
-    for (let i = 0; i <= game.animationInfo.maxBirdFrame; i++) {
+    for (let i = 0; i <= this.game.animationInfo.maxBirdFrame; i++) {
       allBirdIds.add(i);
     }
 

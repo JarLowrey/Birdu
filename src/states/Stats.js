@@ -20,7 +20,18 @@ export default class Stats extends Phaser.State {
 
     const score = this.game.nFormatter(this.game.data.stats.bests.score);
     const level = this.game.nFormatter(this.game.data.stats.bests.level);
-    //setup purchases and purchase buttons
+
+    this.maxScore = this.game.add.text(0, 0, 'High Score: ' + score, this.game.fonts.smallText);
+    this.maxLvl = this.add.text(0, 0, 'Best Level: ' + level, this.game.fonts.smallText);
+    this.birdGrid = this.placeBirdsInGrid();
+    this.showUnlockedBirds();
+
+    this.medals = this.createMedals();
+
+    this.stateBtns.stats.visible = false;
+    this.positionDisplayObjects();
+
+    //setup purchases and purchase buttons after all graphics are initialized
     if (this.game.device.cordova) {
       this.initStore();
 
@@ -32,16 +43,6 @@ export default class Stats extends Phaser.State {
         this.buyBtn.visible = false;
       }
     }
-
-    this.maxScore = this.game.add.text(0, 0, 'High Score: ' + score, this.game.fonts.smallText);
-    this.maxLvl = this.add.text(0, 0, 'Best Level: ' + level, this.game.fonts.smallText);
-    this.birdGrid = this.placeBirdsInGrid();
-    this.showUnlockedBirds();
-
-    this.medals = this.createMedals();
-
-    this.stateBtns.stats.visible = false;
-    this.positionDisplayObjects();
   }
 
   //https://github.com/j3k0/cordova-plugin-purchase/blob/master/doc/api.md
@@ -63,7 +64,8 @@ export default class Stats extends Phaser.State {
       function(product) {
         this.applyUnlockAllSkinsIAP();
         product.finish();
-      }.bind(this));
+      }.bind(this)
+    );
 
     // Log all errors
     store.error(function(error) {

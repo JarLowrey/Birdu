@@ -106,13 +106,12 @@ export default class Game extends Phaser.State {
     this.comboBaseScoreFromEating = 0; //score that is added by eating birds in a combo series. Nothing added from the combo itself
     this.comboTimer = null;
 
-    //load audio
-    this.add.audio('tweet').play();
-
     this.setStartingUiVisibility();
 
     if (this.game.data.play.score) {
       this.pauseGame();
+    } else {
+      this.add.audio('tweet').play();
     }
   }
 

@@ -17,7 +17,6 @@ import Player from '../objects/Sprites/Player';
 
 import GameData from '../objects/Helpers/GameData';
 import Pools from '../objects/Pools';
-import FactoryUi from '../objects/Helpers/FactoryUi';
 import Meat from '../objects/Helpers/Meat';
 
 export default class Game extends Phaser.State {
@@ -25,7 +24,8 @@ export default class Game extends Phaser.State {
   create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    this.background = FactoryUi.displayBg(this.game);
+    this.bg = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, this.game.spritesheetKey, 'bg');
+    this.bg1 = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, this.game.spritesheetKey, 'bg1');
 
     this.game.data.play.player = new Player(this.game);
     this.add.existing(this.game.data.play.player);
@@ -89,6 +89,7 @@ export default class Game extends Phaser.State {
 
     this.textUpdateTimer = this.game.time.create(false);
     this.textUpdateTimer.start();
+
 
     this.enemySpawnTimer = this.game.time.create(false);
     this.enemySpawnTimer.start();
@@ -204,6 +205,24 @@ export default class Game extends Phaser.State {
 
   update() {
     this.game.spritePools.collideAll();
+    this.tileWithPlayer();
+  }
+
+  tileWithPlayer() {
+    const player = this.game.data.play.player;
+    if (!player.alive) {
+      return;
+    }
+
+    const maxSpeed = player.getSpeed();
+    const vx = player.body.velocity.x / maxSpeed;
+    const vy = player.body.velocity.y / maxSpeed;
+
+    this.bg.tilePosition.x += vx * 2;
+    this.bg.tilePosition.y += vy * 2;
+
+    this.bg1.tilePosition.x += vx * 4;
+    this.bg1.tilePosition.y += vy * 4;
   }
 
   birdCollide(player, enemy) {

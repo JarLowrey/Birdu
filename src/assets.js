@@ -57,9 +57,6 @@ export default {
 
   // -- General assets, used throughout the game.
   game: [{
-    key: 'background',
-    type: 'image'
-  }, {
     //   //  Example: Add a text file.
     //   //
     //   //  If `url` is omitted, a pattern `<key>.txt` is assumed.
@@ -207,22 +204,22 @@ export default {
     key: 'spritesheet',
     type: 'atlas',
     format: 'TEXTURE_ATLAS_JSON_HASH'
-      // }, {
-      //   //  Example: Add a texture atlas (alternative form).
-      //   //
-      //   //  Use the `type` field to specify the texture atlas format, as follows:
-      //   //  - `atlasXML`: Starling XML Texture Atlas data format.
-      //   //  - `atlasJSONHash`: texture atlas in JSON Hash data format.
-      //   //  - `atlasJSONArray`: texture atlas in JSON Array data format.
-      //   //
-      //   //  If `atlasURL` is omitted, a pattern `<key>.json` (or `<key>.xml`) is
-      //   //  assumed.
-      //   //
-      //   //  If `textureURL` is omitted, a pattern `<key>.png` is assumed.
-      //   key: 'example',
-      //   type: 'atlasJSONHash',
-      //   atlasURL: 'example.json',
-      //   textureURL: 'example.png'
+    // }, {
+    //   //  Example: Add a texture atlas (alternative form).
+    //   //
+    //   //  Use the `type` field to specify the texture atlas format, as follows:
+    //   //  - `atlasXML`: Starling XML Texture Atlas data format.
+    //   //  - `atlasJSONHash`: texture atlas in JSON Hash data format.
+    //   //  - `atlasJSONArray`: texture atlas in JSON Array data format.
+    //   //
+    //   //  If `atlasURL` is omitted, a pattern `<key>.json` (or `<key>.xml`) is
+    //   //  assumed.
+    //   //
+    //   //  If `textureURL` is omitted, a pattern `<key>.png` is assumed.
+    //   key: 'example',
+    //   type: 'atlasJSONHash',
+    //   atlasURL: 'example.json',
+    //   textureURL: 'example.png'
   }, {
     key: 'font_styles',
     type: 'json',

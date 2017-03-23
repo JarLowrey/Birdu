@@ -83,7 +83,7 @@ export default class FactoryUi {
   }
 
   static displayBg(game) {
-    var background = game.add.sprite(0, 0, 'background');
+    var background = game.add.sprite(0, 0, game.spritesheetKey, 'bg');
     background.height = game.world.height;
     background.width = game.world.width;
 

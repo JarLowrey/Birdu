@@ -26,7 +26,6 @@
     <preference name="KeepRunning" value="true" />
     <icon src="icon.png" />
     <engine name="ios" spec="~4.2.1" />
-    <engine name="android" spec="~6.1.2" />
     <config-file parent="/*" target="AndroidManifest.xml">
         <uses-permission android:name="com.android.vending.BILLING" />
     </config-file>
@@ -49,4 +48,5 @@
         <variable name="BILLING_KEY" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyXvHwPkM3SgOQYn0Vyk/bjyvg1Sp9kaX1WX6SadpU0AavF5G9CV622wAhD79vicfLDl+q8ndJ2p/b02+q1Lda7wl0iX8obDQswNVNzrJEsYgAL/kOUt80PQk1znuTR9fwzG/VoeeC7KskKQBf7dBDdntJ83vlT70cBgC4Ygwyk4uI01VeC+ExkpTTBG4zB2K5lWH82OXFiMn0yQv5/NOQ3esAVvBaJkfeCHfbFRPV/JWXP30Dlhi+nT8AvXHH5UE3kYMyMkeeQvCg/m+vSjCxztVIZrRao5IoYQX6CV+TT5emEOAlrCi8TBhMWYMBBpTfT4isrcVtC+w2Pd9g3eLywIDAQAB" />
     </plugin>
     <plugin name="cordova-custom-config" spec="~3.0.14" />
+    <engine name="android" spec="~6.1.2" />
 </widget>

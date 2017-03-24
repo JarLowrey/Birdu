@@ -69,8 +69,8 @@ export default class Enemy extends Bird {
   }
 
   setSpriteSize() {
-    const max = this.game.data.play.player.levelupArea() * 0.65;
     const min = this.game.originalPlayerArea / 4;
+    const max = this.game.data.play.player.area() * 1.25;
     const range = GameData.floatBetween(min, max);
     //var multiplier = GameData.scaleMultipler(this.game.integers.area.enemy);
     //if (multiplier == 0) multiplier = -this.game.integers.area.enemy.round.nearest;

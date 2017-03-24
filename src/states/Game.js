@@ -218,11 +218,11 @@ export default class Game extends Phaser.State {
     const vx = player.body.velocity.x / maxSpeed;
     const vy = player.body.velocity.y / maxSpeed;
 
-    this.bg.tilePosition.x += vx * 2;
-    this.bg.tilePosition.y += vy * 2;
+    this.bg.tilePosition.x += vx * 0.5;
+    this.bg.tilePosition.y += vy * 0.5;
 
-    this.bg1.tilePosition.x += vx * 4;
-    this.bg1.tilePosition.y += vy * 4;
+    this.bg1.tilePosition.x += vx * 1.5;
+    this.bg1.tilePosition.y += vy * 1.5;
   }
 
   birdCollide(player, enemy) {

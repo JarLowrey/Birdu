@@ -106,47 +106,46 @@ export default {
     // }, {
 
     //AUDIO
-    //Supported formats:
-    //  Android: https://developer.android.com/guide/appendix/media-formats.html
+    // must use ogg in XWalk 23 https://crosswalk-project.org/jira/browse/XWALK-7307
     key: 'background_music',
     type: 'audio',
-    urls: ['audio/wav/background_music.wav', 'audio/ogg/background_music.ogg']
+    urls: ['audio/ogg/background_music.ogg', 'audio/ogg/background_music.ogg']
   }, {
     key: 'bite_friendly',
     type: 'audio',
-    urls: ['audio/wav/bite_friendly.wav', 'audio/ogg/bite_friendly.ogg']
+    urls: ['audio/ogg/bite_friendly.ogg', 'audio/ogg/bite_friendly.ogg']
   }, {
     key: 'bite_scary',
     type: 'audio',
-    urls: ['audio/wav/bite_scary.wav', 'audio/ogg/bite_scary.ogg']
+    urls: ['audio/ogg/bite_scary.ogg', 'audio/ogg/bite_scary.ogg']
   }, {
     key: 'levelup',
     type: 'audio',
-    urls: ['audio/wav/levelup.wav', 'audio/ogg/levelup.ogg']
+    urls: ['audio/ogg/levelup.ogg', 'audio/ogg/levelup.ogg']
   }, {
     key: 'tweet',
     type: 'audio',
-    urls: ['audio/wav/tweet.wav', 'audio/ogg/tweet.ogg']
+    urls: ['audio/ogg/tweet.ogg', 'audio/ogg/tweet.ogg']
   }, {
     key: 'fart',
     type: 'audio',
-    urls: ['audio/wav/fart.wav', 'audio/ogg/fart.ogg']
+    urls: ['audio/ogg/fart.ogg', 'audio/ogg/fart.ogg']
   }, {
     key: 'splat',
     type: 'audio',
-    urls: ['audio/wav/splat.wav', 'audio/ogg/splat.ogg']
+    urls: ['audio/ogg/splat.ogg', 'audio/ogg/splat.ogg']
   }, {
     key: 'cleanUp',
     type: 'audio',
-    urls: ['audio/wav/cleanUp.wav', 'audio/ogg/cleanUp.ogg']
+    urls: ['audio/ogg/cleanUp.ogg', 'audio/ogg/cleanUp.ogg']
   }, {
     key: 'shooting-star',
     type: 'audio',
-    urls: ['audio/wav/shooting-star.wav', 'audio/ogg/shooting-star.ogg']
+    urls: ['audio/ogg/shooting-star.ogg', 'audio/ogg/shooting-star.ogg']
   }, {
     key: 'invincible',
     type: 'audio',
-    urls: ['audio/wav/invincible.wav', 'audio/ogg/invincible.ogg']
+    urls: ['audio/ogg/invincible.ogg', 'audio/ogg/invincible.ogg']
   }, {
     //   //  Example: Add an audio sprite with some sound effects.
     //   //

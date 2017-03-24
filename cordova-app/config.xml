@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2000040" id="com.jtronlabs.birdu" ios-CFBundleVersion="2.3.1" version="2.3.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+<widget android-versionCode="2000040" id="com.jtronlabs.birdu" ios-CFBundleVersion="2.3.1" version="2.3.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Birdu</name>
     <description>
         It's a bird-eat-bird world out there, do what you must to survive.
@@ -27,15 +27,13 @@
     <icon src="icon.png" />
     <engine name="ios" spec="~4.2.1" />
     <engine name="android" spec="~6.1.2" />
-    <plugin name="cordova-custom-config" spec="~3.0.14" />
     <config-file parent="/*" target="AndroidManifest.xml">
         <uses-permission android:name="com.android.vending.BILLING" />
     </config-file>
-    <preference name="android-manifest/uses-permission/[@android:name='android.permission.ACCESS_NETWORK_STATE']" delete="true" />
-    <preference name="android-manifest/uses-permission/[@android:name='android.permission.ACCESS_WIFI_STATE']" delete="true" />
-    <preference name="android-manifest/uses-permission/[@android:name='android.permission.READ_EXTERNAL_STORAGE']" delete="true" />
-    <preference name="android-manifest/uses-permission/[@android:name='android.permission.WRITE_EXTERNAL_STORAGE']" delete="true" />
-
+    <preference delete="true" name="android-manifest/uses-permission/[@android:name='android.permission.ACCESS_NETWORK_STATE']" />
+    <preference delete="true" name="android-manifest/uses-permission/[@android:name='android.permission.ACCESS_WIFI_STATE']" />
+    <preference delete="true" name="android-manifest/uses-permission/[@android:name='android.permission.READ_EXTERNAL_STORAGE']" />
+    <preference delete="true" name="android-manifest/uses-permission/[@android:name='android.permission.WRITE_EXTERNAL_STORAGE']" />
     <plugin name="cordova-plugin-vibration" spec="~2.1.4" />
     <plugin name="cordova-plugin-x-socialsharing" spec="~5.1.6" />
     <plugin name="cordova-plugin-crosswalk-webview" spec="~2.3.0">
@@ -50,4 +48,5 @@
     <plugin name="cc.fovea.cordova.purchase" spec="~6.0.0">
         <variable name="BILLING_KEY" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyXvHwPkM3SgOQYn0Vyk/bjyvg1Sp9kaX1WX6SadpU0AavF5G9CV622wAhD79vicfLDl+q8ndJ2p/b02+q1Lda7wl0iX8obDQswNVNzrJEsYgAL/kOUt80PQk1znuTR9fwzG/VoeeC7KskKQBf7dBDdntJ83vlT70cBgC4Ygwyk4uI01VeC+ExkpTTBG4zB2K5lWH82OXFiMn0yQv5/NOQ3esAVvBaJkfeCHfbFRPV/JWXP30Dlhi+nT8AvXHH5UE3kYMyMkeeQvCg/m+vSjCxztVIZrRao5IoYQX6CV+TT5emEOAlrCi8TBhMWYMBBpTfT4isrcVtC+w2Pd9g3eLywIDAQAB" />
     </plugin>
+    <plugin name="cordova-custom-config" spec="~3.0.14" />
 </widget>

@@ -106,7 +106,7 @@ export default {
     // }, {
 
     //AUDIO
-    // must use ogg in XWalk 23 https://crosswalk-project.org/jira/browse/XWALK-7307
+    // must use ohg in XWalk 23 https://crosswalk-project.org/jira/browse/XWALK-7307
     key: 'background_music',
     type: 'audio',
     urls: ['audio/ogg/background_music.ogg', 'audio/ogg/background_music.ogg']

@@ -88,7 +88,6 @@ export default class Player extends Bird {
 
   makeInvincible(jingleStartingTime = 0) {
     this.invincible = true;
-    console.log("INVINCIBLE")
 
     if (!this.game.bgMusic.paused) this.game.bgMusic.pause();
 
@@ -103,8 +102,8 @@ export default class Player extends Bird {
   }
 
   stopInvincibility() {
-    console.log("STOP INVINCIBLE")
     this.invincible = false;
+    this.invincibleJingle.stop();
 
     this.game.bgMusic.resume();
 

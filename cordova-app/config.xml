@@ -29,6 +29,7 @@
     <config-file parent="/*" target="AndroidManifest.xml">
         <uses-permission android:name="com.android.vending.BILLING" />
     </config-file>
+    <preference delete="true" name="android-manifest/uses-permission/[@android:name='android.permission.INTERNET']" />
     <preference delete="true" name="android-manifest/uses-permission/[@android:name='android.permission.ACCESS_NETWORK_STATE']" />
     <preference delete="true" name="android-manifest/uses-permission/[@android:name='android.permission.ACCESS_WIFI_STATE']" />
     <preference delete="true" name="android-manifest/uses-permission/[@android:name='android.permission.READ_EXTERNAL_STORAGE']" />

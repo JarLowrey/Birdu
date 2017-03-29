@@ -16,7 +16,7 @@
   "author": "James Lowrey <jtronlabs@gmail.com> (http://jtronlabs.github.io/)",
   "private": true,
   "dependencies": {
-    "phaser-ce": "^2.7.0"
+    "phaser-ce": "^2.7.5"
   },
   "bugs": {
     "url": "https://gitlab.com/JTronLabs/Birdu/issues"
@@ -63,7 +63,7 @@
   },
   "scripts": {
     "clean": "gulp clean",
-    "dist": "gulp dist",
+    "dist": "gulp dist && rm -rf cordova-app/www && mkdir cordova-app/www && cp -r dist/* cordova-app/www",
     "lint": "gulp lint",
     "start": "gulp",
     "cordovaWarn": "echo \"Must have cordova installed globally via \"npm install -g cordova\" (may need sudo)\"",

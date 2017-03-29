@@ -1,0 +1,50 @@
+Where did I get my assets from? - links
+===============================
+
+
+Audio
+=====
+background music  - ?
+bite_friendly     - https://www.freesound.org/people/orginaljun/sounds/152313/
+bite_scary        - https://www.freesound.org/people/ggctuk/sounds/80551/
+levelup           - https://www.freesound.org/people/LittleRobotSoundFactory/sounds/270404/
+tweet             - https://www.freesound.org/people/Andreas.Mustola/sounds/338277/
+fart              - https://www.freesound.org/people/bernd666/sounds/113760/
+splat             - https://www.freesound.org/people/LittleRobotSoundFactory/sounds/316535/
+cleanUp           - https://www.freesound.org/people/Jim%20Goad/sounds/272477/
+shooting-star     - http://www.freesound.org/people/plasterbrain/sounds/351810/
+invincible        - http://www.freesound.org/people/SgtPepperArc360/sounds/338866/
+
+Sprites
+=======
+poo.png           - <a href="https://icons8.com">Icons8</a>
+cloud.png         - <a href="https://icons8.com">Icons8</a>
+all bird sprites  - http://opengameart.org/users/bevouliincom
+meat.png          - http://opengameart.org/content/shadowless-lpc-food
+papercuts-2.ttf   - http://www.dafont.com/paper_cuts.font
+background.png    - http://opengameart.org/content/sky-backdrop
+sparkles          - http://opengameart.org/content/sparkles
+splatters         - https://pixabay.com/en/splatter-blue-paint-ink-abstract-303249/
+                  - https://pixabay.com/en/splatter-paint-colors-arts-blue-296489/
+                  - https://pixabay.com/en/splat-purple-paint-arts-grunge-303394/
+                  - https://pixabay.com/en/ink-black-splatter-abstract-paint-303240/
+Star              - http://opengameart.org/content/star
+Eveything else    - Kenney.nl
+
+Considered but not used
+-----------------------
+Tweets:
+  https://www.freesound.org/people/Dneproman/sounds/334876/
+  https://www.freesound.org/people/Dneproman/sounds/334856/
+  https://www.freesound.org/people/Dneproman/sounds/334855/
+
+angrypoo.png           - http://opengameart.org/content/doggy-graphics
+
+
+
+
+
+Software/Contributors
+===============================
+PhotonStorm - PhaserJS
+Lewster32 - HTML5 Game Dev Forums extraordinaire

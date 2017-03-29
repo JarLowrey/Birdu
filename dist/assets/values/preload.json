@@ -1,0 +1,1 @@
+{"minSplashScreenShowTime":1000,"font":{"font":"30px papercuts","fill":"#fff","stroke":"#000","strokeThickness":2,"padding":{"x":4,"y":0}},"defaults":{"playerFrame":17,"settings":{"vibration":true,"screenShake":true,"muted":false},"medals":{"min":0,"max":7,"scoreForLevelUp":1000},"maxBirdFrame":27},"devName":"JTronLabs","appName":"Birdu","bgColor":"#7ec6f2"}

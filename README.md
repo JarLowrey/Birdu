@@ -1,9 +1,9 @@
 
 #Birdu
 
-I am working on a bird-eats-bird game to acclimate myself to the phaser ecosystem.
+Bird-eats-bird game utilizing JS and the Phaser engine.
 
-[View the tutorial online](http://jtronlabs.com/blog/phaser-birdu-1)
+[View the tutorial online](http://jarlowrey.com/blog/phaser-birdu-1.html)
 
 [Click Here to play](http://jarlowrey.com/Birdu/dist/)
 

@@ -16,7 +16,7 @@
   "author": "James Lowrey <jtronlabs@gmail.com> (http://jtronlabs.github.io/)",
   "private": true,
   "dependencies": {
-    "phaser-ce": "^2.7.5"
+    "phaser-ce": "^2.8.2"
   },
   "bugs": {
     "url": "https://gitlab.com/JTronLabs/Birdu/issues"
